@@ -1,576 +1,479 @@
-# AXIS — CLAUDE.md
-## Complete product context, build plan, and bootstrap path
-### Version 1.0 — Last updated: March 2026
+# AXIS — CLAUDE.md v2.0
+## Complete product context, UX architecture, intelligence system, build plan
+### Last updated: March 2026 — Session 3 complete, Sessions 4+ planned
 ### Author: Hendre (Dreyco Pty Ltd, Brisbane)
 
 ---
 
 ## READ THIS FIRST
 
-This file is the single source of truth for the Axis project. Load it at the start of every Claude Code or Cursor session. Update it after every significant session — what changed, what broke, what was decided and why.
+This is the single source of truth for Axis. Load at the start of every Claude Code or Cursor session. Update after every significant session — what changed, what broke, what was decided and why.
 
-**Current status:** Pre-build. No code written. This document is the foundation.
+**Current status:** Backend live on Railway. React frontend live on Vercel. Brain dump working end to end. Gmail OAuth and intelligence loop not yet built.
 
-**The constraint:** Solo founder (Python/FastAPI background), no Swift expertise, limited capital. Build must generate revenue before it can fund the iOS OS-layer work that creates the moat.
+**The rule:** Build on and tweak what exists. Never full redesign. Every session moves forward.
 
 ---
 
 ## 1. WHAT AXIS IS
 
 ### One sentence
-Axis is an ambient AI agent layer that bonds to iOS at the OS level — reading emails, messages, Instagram, Snapchat, WhatsApp, calendar, health data, and every notification continuously — and communicates back through one persistent thread, the lock screen, and the Dynamic Island. You never manage it. It handles 90% silently and surfaces the one thing that needs you right now.
+Axis is an ambient AI agent that reads your email, calendar, health, location, and finances continuously — and communicates back through one persistent thread, smart notifications, and a lock screen widget. You stop managing your phone. It manages your life.
 
 ### The core insight
-Every productivity app makes you more phone-dependent. They solve the problem by giving you another thing to manage. Axis inverts this. Your phone already has all the information needed to run your life. The product is the AI that reads it and handles it — not a new container for you to maintain.
-
-**Before Axis:** You open 12 apps to check things. 96 phone pickups/day. 4.5 hours screen time. You are the operating system.
-
-**After Axis:** Axis reads everything. You see 5 things from 340 inputs. 8 deliberate pickups/day. 12 minutes screen time. Axis is the operator. You are the executive.
+Every productivity app makes you more phone-dependent. Axis inverts this. Your phone already has all the data needed to run your life. Axis is the AI that reads it, handles 95% silently, and surfaces only what genuinely needs you — at the right moment, on the right surface, with the action pre-prepared.
 
 ### The slogan
 **Be phone lazy. Be world productive.**
 
+### The goal
+8 minutes of phone time per day. 3 deliberate sessions. Everything else handled.
+
 ### Product score
-**9.5/10** as a product concept. The 0.5 it doesn't get: Apple is building in this direction and the window is 18–24 months. This is a build-fast-to-exit strategy. The acquirer is Apple.
-
----
-
-## 2. THE PRODUCT
-
-### Core surfaces
-| Surface | Tech | What it shows |
-|---|---|---|
-| Lock screen widget | WidgetKit | One signal — your next action, always visible |
-| Dynamic Island | ActivityKit | Live agent status — what Axis is reading right now |
-| Notification shelf | UNNotificationServiceExtension | Rewrites every notification with context + action buttons |
-| The thread | SwiftUI / React | Persistent iMessage-style conversation with Axis |
-| macOS menu bar | NSStatusBar | Current signal in one line, click to expand thread |
-| Apple Watch | ClockKit complication | Current signal, one-tap done |
-| Control Centre tile | ControlCentreExtension | All active agents + status |
-
-### The thread is the product
-One persistent conversation. Axis messages you — you don't go looking for it. Morning digest at 7AM. Proactive alerts when something needs you. Every message ends with a real-world action. Every session ends with "put the phone down."
-
-**Example thread exchange:**
-```
-AXIS [7:02]: Morning read complete. 43 things came in overnight. 
-You need to act on 3. Marcus replied — high intent, draft ready. 
-Your 10AM location changed — they emailed at 11PM, you'd have missed it. 
-Invoice reminder sent to Greenfield while you slept.
-[Send Marcus reply] [What changed at 10AM] [What you handled]
-
-AXIS [7:04]: Sarah DM'd on Instagram. 22 other DMs were noise — 
-this one isn't. She's asking about the job you posted. Act today.
-[Draft reply] [Queue for noon]
-
-AXIS [7:06]: You're done. Next session at 12:30. 
-Put the phone down and go do the real thing.
-```
-
-### Data sources Axis reads
-| Source | API/Method | What it extracts |
-|---|---|---|
-| iMessage + WhatsApp | Notification parsing + Share Extension | Sender importance, urgency, draft replies |
-| Gmail + Apple Mail | Mail extensions + notifications | Rank 200 emails to 3, draft replies in user voice |
-| Instagram DMs | Notification content + Share Extension | Real opportunities buried in social noise |
-| Snapchat | Notification + Story context | Cross-reference location with calendar |
-| Calendar (all) | EventKit | Conflicts, prep tasks 30min before meetings, travel time |
-| Health | HealthKit | Sleep → energy routing, movement gaps |
-| Location | CoreLocation | GPS context switching — site mode, home mode |
-| Slack / Teams | Notification parsing | Blocker detection, thread ranking |
-| Banking / Stripe / Xero | Notification parsing | Overdue invoices, cash flow warnings |
-| All notifications | UNNotificationServiceExtension | Filter 95% noise, re-rank remaining 5% |
-| Voice / Siri | SiriKit Intents | Hands-free capture: "Add to Axis: call supplier Thursday" |
-
-### Privacy architecture (non-negotiable)
-Raw personal data — email content, message content, social DMs — **never leaves the device**. Only generated text and metadata hits the backend. The Claude API is called only for generation (drafting replies, synthesising context, morning digest). All classification and routing runs on-device. This is both the privacy story and the App Store review strategy.
-
----
-
-## 3. SKILLS — THE AGENT LAYER
-
-Each Skill is a specialist AI agent running continuously in the background. It reads one domain, acts silently where it can, and surfaces only what genuinely needs a human decision. Users can also talk directly to any Skill.
-
-### Skill 1: Email Skill
-**What it does:** Reads all inboxes. Ranks 200 emails to 3 that matter. Drafts replies in the user's voice. Sends with one-tap approval.
-**Silent actions:** Sends low-stakes replies (meeting confirmations, acknowledgements) without prompting.
-**Surfaces:** Urgent thread in Dynamic Island. Drafted reply in notification shelf. Summary in morning digest.
-**Tier:** Core (free tier — limited, Pro — full)
-
-### Skill 2: Social Skill
-**What it does:** Reads Instagram, Snapchat, Twitter/X, TikTok. Filters 97% as noise. Surfaces DMs that are real opportunities. Cross-references Stories with calendar for conflicts.
-**The viral feature:** Jake posts a Snap from Site B. Your calendar shows he has a meeting at Site A in 35 minutes. Axis catches it before you do.
-**App intercept:** When user opens Instagram mid-deep-work, Axis intercepts: "Sarah replied — want to see just that and close?" 40 seconds instead of 25 minutes.
-**Tier:** Pro
-
-### Skill 3: Calendar Skill
-**What it does:** Watches calendar + clock. Surfaces prep tasks 30 min before meetings. Blocks meeting requests during deep work. Detects conflicts. Factors in Maps travel time.
-**Tier:** Core
-
-### Skill 4: Health Skill
-**What it does:** Reads Apple Health continuously. Sleep quality → adjusts task weighting. Below-threshold sleep = route to admin, not deep work. Movement gaps → surfaces walk reminder.
-**Tier:** Core
-
-### Skill 5: Finance Skill
-**What it does:** Monitors banking apps, Stripe, Xero, QuickBooks via notifications. Tracks overdue invoices. Flags cash flow warnings. Drafts payment reminders.
-**Tier:** Pro
-
-### Skill 6: Site Skill (builders/tradespeople)
-**What it does:** GPS-triggered context switch on arrival at site. Offline-first. Voice capture hands-free. Crew status and blocker detection. Delivery and inspection tracking.
-**Key:** Works completely offline — syncs when connected. Built for on-site use.
-**Tier:** Pro
-
-### Skill 7: Study Skill (students)
-**What it does:** Tracks assignments, deadlines, exam schedules. Builds revision plans automatically. Surfaces study sessions when energy and time align. Detects coverage gaps before exams.
-**Tier:** Pro
-
-### Skill 8: Team Skill (managers/business owners)
-**What it does:** Monitors team task status. Surfaces blockers before they cause delays. Manager pushes a signal to a team member — they see it as their next action. No Slack thread needed.
-**Tier:** Team plan
-
----
-
-## 4. USER MODES
-
-The mode switcher changes the default task vocabulary, energy framing, and AI context. GPS can trigger mode switches automatically (arrive at site → Site mode activates).
-
-| Mode | Who | Auto-trigger |
-|---|---|---|
-| Personal | Default | — |
-| Work | Office workers, solo devs | Arrive at workplace GPS |
-| Builder | Tradespeople, construction | Arrive at job site GPS |
-| Student | Students at any level | — |
-| Military | Service personnel | Manual only |
-| Team | Managers, business owners | — |
-
----
-
-## 5. BUSINESS MODEL
-
-### Pricing
-| Tier | Price | What's included |
-|---|---|---|
-| Free | $0/mo | Thread, Signal, manual tasks, Calendar Skill (read), 5 AI actions/day |
-| Pro | $9/mo | Everything + all Skills, unlimited AI, macOS app, Watch, app intercept |
-| Team | $14/user/mo | Everything in Pro + signal sharing, manager dashboard, priority broadcast |
-
-### Revenue milestones
-| Users | MRR | What it unlocks |
-|---|---|---|
-| 500 Pro | $4.5K | Proof of life. Ramen. |
-| 1,000 Pro | $9K | Sustainable solo ops. |
-| 2,000 Pro + 50 teams | $18.7K | **HIRE TRIGGER — 2 Swift contractors** |
-| 5,000 Pro + 200 teams | $47.8K | Full team + runway |
-| 20,000 Pro + 1,000 teams | $194K | Series A territory |
-| 50,000 Pro + 2,500 teams | $485K | Acquisition-ready |
-
-### Conversion mechanic
-The brain dump feature is the primary conversion hook. User types anxious stream of consciousness → Claude API returns ranked task list with reasoning → user sees the value instantly. Paywall triggers after first brain dump. Expected conversion: 15–25% of users who complete a brain dump.
+- **Current build (brain dump only):** 6/10
+- **With Gmail + Calendar OAuth + intelligence loop:** 8.5/10
+- **With Android NotificationListenerService:** 9.5/10
+- **After Apple acquisition (native OS access):** 9.5/10 on iOS
 
 ### Acquisition target
-**Primary: Apple.** Axis is what Apple Intelligence should be. The OS integration expertise, user behaviour data, and agent architecture are the asset. Target acquisition at $500K MRR / 100K MAU.
-
-**Secondary:** Microsoft (Copilot mobile), Anthropic (consumer iOS product), Google (Assistant replacement).
+**Apple** — 18-month window. iOS 8.5 proves the concept. Android 9.5 is the acquisition demo. Apple is the only company that can complete the last 1 point natively on iOS.
 
 ---
 
-## 6. TECHNICAL ARCHITECTURE
+## 2. THE UX ARCHITECTURE
 
-### The full stack
+### Core principle
+**Axis is the HQ. Everything else is a surface that points back to HQ.**
+
+The app is the command centre — the thread, brain dump, skills, day plan. But most users most of the time should never need to open it. They get what they need from the lock screen widget, a smart notification, or Siri. When they do open the app, it's deliberate.
+
+**Axis comes to you. You go to Axis only when you choose to.**
+
+### The surfaces
+
+| Surface | Tech | Phase | What it shows |
+|---|---|---|---|
+| The Thread (HQ) | SwiftUI / React | Phase 1 | Persistent iMessage-style conversation. Axis messages you proactively. |
+| Lock screen widget | WidgetKit | Phase 1 | One signal — most important action right now. Interactive buttons (mark done, snooze). |
+| Smart notifications | APNs + action buttons | Phase 1 | Context-aware pushes with pre-prepared actions. [Send] [Edit] [Later] |
+| Siri voice capture | App Intents framework | Phase 1 | "Hey Siri, add to Axis: call supplier Thursday." Hands-free input. |
+| Dynamic Island | ActivityKit | Phase 2 | Live agent status — what Axis is reading right now. |
+| Apple Watch | ClockKit | Phase 3 | One-tap done. Current signal. Haptic alerts. |
+| macOS menu bar | NSStatusBar | Phase 3 | Current signal in one line. Click to expand thread. |
+
+### The interaction patterns
+
+**Pattern 1: Axis reads → you act**
+Axis reads Gmail, Calendar, Health, GPS continuously. Detects what matters. Surfaces via notification or thread message with action pre-prepared. You tap one button.
+Example: "Marcus replied — high intent, draft ready." [Send] [Edit]
+
+**Pattern 2: You speak → Axis handles**
+Voice capture via Siri, brain dump text, or Share Extension. You give Axis raw information. It structures, prioritises, and adds to thread or task list.
+Example: "Hey Siri, brain dump in Axis: waterproof membrane failing on Level 2, need to reorder"
+
+**Pattern 3: Widget → deep link**
+Every widget tap goes exactly to the right place — not the app home screen. Signal widget opens that specific task. Email widget opens the draft.
+
+**Pattern 4: One tap done**
+Every surface has a one-tap action. The user almost never types. Axis pre-prepares everything.
+
+### The ideal Axis day (target state)
+
+```
+6:50 AM  Morning digest push arrives while user is asleep
+7:00 AM  Session 1 (3 min) — open thread, handle 4 things with 4 taps. "Put the phone down."
+8:30 AM  GPS triggers Builder mode. Widget updates. Site context loads.
+9:15 AM  Hands-free: "Hey Siri, tell Axis: membrane failing on Level 2, call supplier"
+10:00 AM Meeting prep notification 30 min before — key points from recent email with Marcus
+12:30 PM Session 2 (3 min) — midday check, brain dump loose thoughts
+5:30 PM  Finance alert: "Invoice #47 overdue 14 days" [Send reminder] → done in 3 seconds
+6:00 PM  Session 3 (2 min) — end of day, tomorrow's signal set. "You're done. Put the phone down."
+
+Total phone time: ~8 minutes
+```
+
+---
+
+## 3. THE INTELLIGENCE ARCHITECTURE
+
+### The 5-layer system
+
+```
+Layer 1 — Data ingestion
+Gmail OAuth · Google Calendar · Apple Calendar (EventKit) · HealthKit · CoreLocation
+Stripe/Xero · Slack OAuth · Contacts graph · Brain dump text · Siri voice · Share Extension
+
+↓ every 15 min · on change · on GPS trigger
+
+Layer 2 — Context assembly (backend)
+New inputs since last run · User model (learned patterns) · Current mode + location
+Health context · Today's calendar · Relationship graph · Last 10 thread messages
+
+↓ assembled into one structured prompt
+
+Layer 3 — Claude processing (claude-sonnet-4-5)
+Dispatch job · Email ranker · Morning digest · Meeting prep · Signal ranker · Voice model
+
+↓ returns structured JSON with routing instructions
+
+Layer 4 — Output routing
+Push notification + action buttons · Lock screen widget update · Thread message
+Dynamic Island · Signal queue update · Silent (handled, no interrupt)
+
+↓ user acts (or doesn't)
+
+Layer 5 — Feedback loop
+Every action logged → user model updated weekly → Claude calls improve → better decisions
+```
+
+### The dispatch job (the heartbeat)
+Runs every 15 minutes on Railway. Pulls new data from all connected OAuth sources. Assembles context. Calls Claude once. Routes outputs to correct surfaces. This is what makes Axis feel "always watching."
+
+**Claude's job in the dispatch job:** Make decisions, not suggestions. For each input: urgency score (1-10), actionable (bool), surface to route to, action to pre-prepare, one-sentence reason. Return structured JSON only.
+
+### The routing rules
+
+| Urgency | Actionable? | Goes to | Example |
+|---|---|---|---|
+| 8-10/10 | Yes | Push notification immediately | High-intent email reply |
+| 8-10/10 | No | Push + thread | Meeting location changed |
+| 6-7/10 | Yes | Push during business hours | Overdue invoice |
+| 5-6/10 | Yes | Morning digest | Meeting prep for tomorrow |
+| 3-5/10 | Info | Morning digest | Health context |
+| 1-2/10 | No | Silent | Newsletters, low-value emails |
+
+**95% of what Axis processes never reaches the user.** That's the product.
+
+---
+
+## 4. THE MEMORY ARCHITECTURE
+
+### Three layers of memory
+
+**Layer 1 — Session context (expires 48hrs)**
+Fast access for every Claude call. Current mode, today's calendar, last 10 messages, health context, active tasks.
+
+**Layer 2 — User model (never expires, grows forever)**
+Everything Axis has learned about this specific person:
+- Voice patterns: sentence length, formality by recipient type, sign-offs, common phrases
+- Relationship graph: contact importance scores, avg reply time, reply rate per contact
+- Productive windows: when they actually complete tasks
+- Completion rates: by category (work/health/admin etc)
+- Notification response windows: when they act on pushes
+- Defer patterns: what categories they consistently avoid
+- Reply velocity: per contact, per category
+
+**Layer 3 — Collective intelligence (anonymised, shared across users)**
+Patterns that help new users immediately. Compounds with scale. This is the moat.
+
+### Database tables to add (Session 4)
+
+```sql
+CREATE TABLE user_model (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) UNIQUE,
+  voice_patterns JSONB DEFAULT '{}',
+  relationship_graph JSONB DEFAULT '{}',
+  productive_windows JSONB DEFAULT '{}',
+  completion_rates JSONB DEFAULT '{}',
+  notif_response_rates JSONB DEFAULT '{}',
+  defer_patterns JSONB DEFAULT '{}',
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE interactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  surface TEXT NOT NULL,
+  content_type TEXT NOT NULL,
+  content_id TEXT,
+  action_taken TEXT NOT NULL,
+  response_time_ms INTEGER,
+  mode TEXT,
+  health_context JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE relationship_graph (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  contact_email TEXT NOT NULL,
+  importance_score FLOAT DEFAULT 5.0,
+  avg_reply_time_hrs FLOAT,
+  reply_rate FLOAT,
+  total_interactions INTEGER DEFAULT 0,
+  last_interaction TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, contact_email)
+);
+
+CREATE TABLE patterns (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  best_productive_hours JSONB,
+  deferred_categories JSONB,
+  notif_response_windows JSONB,
+  draft_acceptance_rate FLOAT,
+  email_ranking_accuracy FLOAT,
+  week_of DATE,
+  UNIQUE(user_id, week_of)
+);
+
+CREATE TABLE sent_emails_cache (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  recipient TEXT,
+  recipient_type TEXT,
+  subject TEXT,
+  body_summary TEXT,
+  word_count INTEGER,
+  formality_score FLOAT,
+  sent_at TIMESTAMP
+);
+
+CREATE TABLE collective_patterns (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  mode TEXT,
+  pattern_type TEXT,
+  pattern_data JSONB,
+  sample_size INTEGER,
+  confidence FLOAT,
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+## 5. THE IMPROVEMENT LOOP
+
+Every user action is a training signal. Every week the system gets smarter automatically.
+
+**What gets logged:** Send, edit, dismiss, defer, open, ignore — every interaction. Mode, time, health context, what was shown, response time.
+
+**Weekly improvement job (Sunday 3AM):**
+1. Analyse past 7 days of interactions
+2. Compute accuracy rates for each prediction type
+3. Call Claude with interaction summary
+4. Claude updates user model JSON
+5. Updated model feeds into all next week's Claude calls
+
+**Voice model builder (Sunday 4AM):**
+1. Pull last 50 sent emails via Gmail API
+2. Analyse sentence patterns, formality by recipient type, length, phrases
+3. Update voice_patterns in user_model
+4. Improved drafts the following week
+
+**Evolution timeline:**
+- Day 1-3: General heuristics. Useful but generic.
+- Week 1-2: Pattern detection begins. Voice matching starts.
+- Week 3-4: "It knows me." Drafts sound like you.
+- Month 2-3: Anticipation. Axis predicts before you ask.
+- Month 6+: Genuinely irreplaceable. Switching cost = 6 months of learning.
+
+---
+
+## 6. RAILWAY CRON JOBS
+
+```
+*/15 * * * *   Dispatch job — pulls data, calls Claude, routes outputs
+50 6 * * *     Morning digest — 6:50AM user local time
+0 3 * * 0      Improvement job — Sunday 3AM
+0 4 * * 0      Voice model builder — Sunday 4AM
+0 5 * * 0      Collective patterns — Sunday 5AM
+```
+
+---
+
+## 7. THE THREE CRITICAL PROMPTS
+
+### Prompt 1 — Dispatch
+
+```python
+DISPATCH_SYSTEM = """
+You are Axis, an ambient AI agent for {name}.
+Your job: decide what matters right now and what to do about it.
+Make decisions, not suggestions. Return ONLY structured JSON.
+
+For each item return:
+{
+  "urgency": 1-10,
+  "actionable": true/false,
+  "surface": "push|thread|widget|digest|silent",
+  "action_type": "send_reply|create_task|update_widget|notify|none",
+  "pre_prepared_action": "draft text or task title or notification copy",
+  "reason": "one sentence"
+}
+"""
+```
+
+### Prompt 2 — Draft reply
+
+```python
+DRAFT_REPLY_SYSTEM = """
+You are drafting an email reply on behalf of {name}.
+Write EXACTLY like them. Never sound like AI.
+Match their voice patterns precisely. Ready to send without editing.
+
+Voice model: {voice_patterns}
+Example past replies: {example_replies}
+Email to reply to: {email_content}
+Thread context: {thread_summary}
+Target length: {target_word_count} words
+"""
+```
+
+### Prompt 3 — Morning digest
+
+```python
+MORNING_DIGEST_SYSTEM = """
+You are Axis. Generate {name}'s morning brief as thread messages.
+Specific, warm, direct. Never waffle.
+Max 4 messages. Each under 80 words.
+End with "put the phone down."
+
+Overnight data: {overnight_summary}
+Today's calendar: {calendar_today}
+Axis handled silently: {silent_count} items
+"""
+```
+
+---
+
+## 8. DATA SOURCES AND INTEGRATIONS
+
+### Priority 1 — Build now
+| Source | Method | What Axis does |
+|---|---|---|
+| Gmail | OAuth API | Ranks inbox, drafts replies in user's voice |
+| Google Calendar | OAuth API | Meeting prep, conflict detection, travel time |
+| Apple Calendar | EventKit (native) | iCloud calendar events |
+| Apple Health | HealthKit (native) | Sleep routing, energy-based task weighting |
+| GPS | CoreLocation (native) | Mode switching on arrival |
+| Stripe/Xero | API OAuth | Invoice alerts, cash flow |
+| Contacts | CNContactStore (native) | Relationship scoring |
+| Share Extension | iOS native | User shares anything from any app into Axis |
+
+### Priority 2 — Phase 2
+| Source | Method | What Axis does |
+|---|---|---|
+| Slack | OAuth API | Channel reading, draft replies |
+| Outlook/M365 | Microsoft Graph API | Enterprise email + Teams |
+| WhatsApp Business | Business API | Business message reading |
+| iOS Focus Modes | FocusAPI | Auto-sets Focus mode |
+
+### iOS sandbox reality
+- iMessage, WhatsApp personal, Instagram DMs, Snapchat — **blocked on iOS**
+- Android NotificationListenerService = all notifications, official API = 9.5/10 product
+- Build Android after iOS hits $18K MRR — use as Apple acquisition demo
+
+---
+
+## 9. APP INTENTS (SIRI + WIDGET BUTTONS)
+
+```
+"Hey Siri, add to Axis: [text]" → thread + task queue
+"Hey Siri, what's my Axis signal?" → speaks back current task
+"Hey Siri, mark my Axis signal done" → marks done, advances queue
+"Hey Siri, brain dump in Axis" → dictation mode, returns ranked tasks
+"Hey Siri, switch Axis to Builder mode" → changes context
+"Hey Siri, open Email Skill in Axis" → deep links to skill
+"Hey Siri, send that Axis reply" → sends pre-drafted reply
+"Hey Siri, what's in my Axis brief?" → reads back digest
+```
+
+Interactive widget buttons (iOS 17+ App Intents):
+- [Done] — marks signal complete, widget updates instantly
+- [Snooze] — defers 2 hours, shows next priority
+- [Quick add] — opens text input from lock screen
+- [Send reply] — sends pre-drafted email reply
+
+---
+
+## 10. TECH STACK
+
 | Layer | Tool | Notes |
 |---|---|---|
-| iOS UI | SwiftUI + UIKit | Native only. No React Native, no Flutter. |
-| OS surfaces | WidgetKit + ActivityKit | Lock screen widget, Dynamic Island |
-| Notification layer | UNNotificationServiceExtension | Intercepts + rewrites every notification |
-| Data access | EventKit, HealthKit, CoreLocation, SiriKit | Apple system frameworks |
-| Local storage iOS | Core Data + CloudKit | Device storage + cross-device sync |
-| On-device ML | CoreML (Phase 6) | Urgency classifier, relationship graph |
-| Backend | FastAPI on Railway | Lightweight — most processing on-device |
-| Database | Neon Postgres | Users, threads, subscriptions, team signals |
-| Team sync | CloudKit | End-to-end encrypted signal sharing |
-| AI | Anthropic Claude API (claude-sonnet-4-5) | Generation only — drafting, coaching, synthesis |
-| Dev AI | Claude Code + Cursor IDE | Primary development environment |
-| Auth | Sign in with Apple + Clerk | Apple required for App Store |
-| Payments | RevenueCat (iOS) + Stripe (Team/web) | StoreKit wrapper for in-app purchases |
-| Push | APNs direct | Axis-generated notifications |
-| Email | Resend | Onboarding, digests, team invites |
-| Analytics | PostHog | Behaviour only — no personal content |
-| CI/CD | GitHub + Railway auto-deploy | Push to main → deploys |
-
-### Repository structure
-```
-axis-backend/         ← FastAPI, Neon Postgres, Claude API
-  CLAUDE.md           ← Backend context (update every session)
-  src/
-    main.py
-    routes/
-      thread.py
-      signals.py
-      agents.py
-      auth.py
-      payments.py
-    services/
-      claude_service.py
-      morning_digest.py
-      skills/
-        email_skill.py
-        calendar_skill.py
-        finance_skill.py
-        social_skill.py
-        site_skill.py
-        study_skill.py
-        team_skill.py
-
-axis-ios/             ← Swift, SwiftUI, all native iOS
-  CLAUDE.md           ← iOS context (Cursor reads this)
-  .cursorrules        ← Cursor-specific Axis context
-  Axis/
-    Views/
-      ThreadView.swift
-      SignalView.swift
-      BrainDumpView.swift
-      SkillsView.swift
-      DayPlanView.swift
-    Extensions/
-      NotificationExtension/
-      WidgetExtension/
-      ShareExtension/
-    Services/
-      ClaudeAPIService.swift
-      CloudKitService.swift
-      HealthKitService.swift
-      EventKitService.swift
-
-axis-web/             ← React + Vercel (web prototype + web version)
-  CLAUDE.md           ← Web context
-  src/
-    components/
-      Thread/
-      Signal/
-      BrainDump/
-      Skills/
-```
-
-### The CLAUDE.md rule
-Every repository has a CLAUDE.md in the root. Every Cursor session reads .cursorrules. Both are updated after every significant session. This is non-negotiable. The compounding value is lost if they go stale. 5 minutes per session. This is the most important development habit in the build.
+| iOS UI | SwiftUI + UIKit | Native only |
+| App integration | App Intents framework | Siri + Shortcuts + widget buttons |
+| iOS data | EventKit · HealthKit · CoreLocation · CNContactStore | Native |
+| OS surfaces | WidgetKit + ActivityKit | Lock screen + Dynamic Island |
+| Backend | FastAPI on Railway | Async throughout |
+| Database | Neon Postgres | All tables defined above |
+| AI | Anthropic claude-sonnet-4-5 | Dispatch, drafts, digest |
+| Dev AI (backend) | Claude Code | Primary dev |
+| Dev AI (iOS) | Cursor + Claude 3.5 Sonnet | .cursorrules in iOS root |
+| Auth | Sign in with Apple + Clerk | |
+| Payments | RevenueCat (iOS) + Stripe (web) | |
+| Email | Resend | |
+| Analytics | PostHog | |
 
 ---
 
-## 7. THE BOOTSTRAP PATH
+## 11. BUSINESS MODEL
 
-### The core logic
-You (Python/FastAPI founder, no Swift expertise) can build 70% of Axis to a shippable, revenue-generating standard using Cursor + Claude 3.5 Sonnet for Swift. That 70% is enough to get to $18K MRR. $18K MRR funds two senior Swift contractors who build the OS-level 30% that creates the moat. You keep 100% equity.
-
-### What Cursor + Claude 3.5 can build (do this yourself)
-| Feature | Buildable? | Notes |
+| Tier | Price | Includes |
 |---|---|---|
-| Thread UI — iMessage style | ✅ Yes | Web and SwiftUI |
-| Signal screen — 3 tasks, battle plan | ✅ Yes | Web and SwiftUI |
-| Brain dump → ranked task list | ✅ Yes | Pure Claude API — your strongest feature |
-| 6 AI Skills — talk directly | ✅ Yes | Pure Claude API, system prompts |
-| Daily brief + morning digest | ✅ Yes | Claude API generation |
-| RevenueCat Pro paywall | ✅ Yes | Well-documented SDK |
-| Sign in with Apple | ✅ Yes | Standard iOS pattern |
-| Basic WidgetKit lock screen widget | ⚠️ Possible | Achievable, test on real device |
-| EventKit calendar reads | ⚠️ Possible | Achievable with care |
-| FastAPI backend | ✅ Yes | Your existing domain |
-| Neon Postgres schema | ✅ Yes | Your existing domain |
-| Claude API integration | ✅ Yes | Your existing domain |
+| Free | $0 | Thread, Signal, 3 brain dumps/day |
+| Pro | $9/mo | Gmail, all Skills, unlimited brain dump, daily brief |
+| Team | $14/user/mo | Signal sharing, manager dashboard |
 
-### What requires Swift contractors (do NOT attempt solo)
-| Feature | Why it needs experts |
-|---|---|
-| UNNotificationServiceExtension | Silently fails on device — impossible to debug without deep iOS knowledge |
-| ActivityKit Dynamic Island | New API, thin training data, failure modes are invisible |
-| Social Skill notification parsing | Complex multi-app integration, privacy edge cases |
-| App intercept (Screen Time API) | Restricted API, easy to get rejected |
-| On-device CoreML model | Requires ML + iOS expertise combination |
-| Background battery optimisation | Requires Instruments profiling knowledge |
-
-### The viability test
-Before spending a dollar or writing a line of code, ask these questions honestly:
-
-**Question 1:** Can you personally build the web prototype in 3 weeks? (React + FastAPI + Claude API = your existing stack)
-→ If no: reconsider whether this project is viable for you right now.
-
-**Question 2:** Are you willing to learn basic SwiftUI with Cursor + Claude 3.5 to build a simple iOS shell?
-→ If no: you need capital to hire from day one, which changes the path significantly.
-
-**Question 3:** Is $18K MRR achievable in 4 months on a web + basic iOS product with no OS moat?
-→ Honest answer: possible but not certain. The brain dump feature is your best shot. If it doesn't convert, the OS moat features won't save you.
-
-**Question 4:** Do you have 15–20 hours/week to build while still working as a carpenter's apprentice?
-→ If no: timeline extends. 16-week sprint becomes 32 weeks. Apple's window starts closing at 24 months.
+Revenue milestones:
+- $4.5K MRR — proof of life
+- $18.7K MRR — **HIRE TRIGGER: 2 Swift contractors**
+- $500K MRR — acquisition conversations
 
 ---
 
-## 8. PHASE-BY-PHASE BUILD PLAN
+## 12. SESSION 4 PRIORITIES (DO IN THIS ORDER)
 
-### Phase 1: Web prototype (Weeks 1–4)
-**Stack:** React + Vercel, FastAPI + Railway, Neon, Claude API, Clerk, Stripe
-**What you build:** Thread UI, Signal screen, Brain Dump, 6 Skills, Daily Brief, mode switcher, Stripe $9/mo paywall
-**Goal:** 200 free users. Validate thread model. Prove brain dump converts.
-**You need:** Nothing new. This is your existing stack.
-**Milestone:** Web app live. 50 people have used the brain dump. NPS measured.
+1. Add 4 new database tables (user_model, interactions, relationship_graph, patterns)
+2. Gmail OAuth integration — connect inbox, poll every 15 min
+3. Dispatch job — 15-min Railway cron, calls Claude, routes outputs
+4. Morning digest cron — 6:50AM
+5. Skills screens in React
+6. Daily brief screen in React
+7. Mode switcher
+8. Stripe $9/mo paywall
+9. Interactive WidgetKit widget with App Intent buttons
+10. Landing page
 
-### Phase 2: Basic iOS app (Weeks 5–10)
-**Stack:** Cursor + Claude 3.5 Sonnet + SwiftUI
-**What you build:** SwiftUI thread, signal screen, brain dump, skills, basic WidgetKit widget, Sign in with Apple, RevenueCat
-**Goal:** App Store live. First 500 Pro subscribers ($4.5K MRR).
-**You need:** Apple Developer account ($99), real iPhone for testing
-**Milestone:** Live on App Store. Brain dump demo video posted. First paying users.
-
-### Phase 3: Growth + Team plan (Weeks 11–12)
-**Stack:** Same + CloudKit for team sync
-**What you build:** Team signal sharing, manager view, Team plan at $14/user/mo, Google Calendar integration, morning digest cron job
-**Goal:** $18K MRR trigger point. 2,000 Pro + 50 teams.
-**Milestone:** Revenue hit. Swift contractors hired.
-
-### Phase 4: OS moat — contractors build (Weeks 13–24)
-**Stack:** 2 senior Swift contractors + you on backend
-**What they build:** UNNotificationServiceExtension, ActivityKit Dynamic Island, Social Skill, app intercept, Health Skill deep integration
-**What you build:** Backend agent processing, Claude API integration for social parsing, prompt engineering
-**Milestone:** Social Skill live. Viral growth begins. Product becomes genuinely hard to copy.
-
-### Phase 5: Scale (Months 7–12)
-**Stack:** Full team, potential backend hire
-**What gets built:** Finance Skill, Site Skill deep, Study Skill, on-device CoreML classification starts
-**Milestone:** $100K+ MRR. Series A fundable. Acquisition conversations warming.
-
-### Phase 6: Acquisition ready (Months 13–18)
-**What gets built:** On-device ML model, personalised voice model, full relationship graph, Apple Watch, macOS app polished
-**Milestone:** $500K MRR, 100K MAU, on-device intelligence, full OS surface coverage.
+**Start command for Session 4:**
+```bash
+cd ~/forge/axis-backend && claude
+```
+Tell Claude Code: "Read CLAUDE.md v2.0. Add the 4 new database tables first, then build Gmail OAuth integration and the dispatch job."
 
 ---
 
-## 9. SPRINT PLAN — WEEK BY WEEK (Phases 1–3)
+## 13. CURRENT DEPLOYMENT
 
-### Week 1 — Foundation (no code)
-- [ ] Create GitHub repos: axis-backend, axis-ios, axis-web
-- [ ] Write CLAUDE.md for all three repos (this document as the base)
-- [ ] Create .cursorrules for axis-ios
-- [ ] Set up Railway project: axis-production
-- [ ] Set up Neon DB: users, threads, signals, agents, subscriptions tables
-- [ ] Set up Clerk auth
-- [ ] Set up PostHog analytics
-- [ ] Create Figma file: design system + all screens
-- [ ] Create Linear project: all Phase 1 issues
-- [ ] Register Apple Developer account ($99) — do this NOW, takes days
-- [ ] Post Swift contractor brief on Upwork (even if not hiring yet — pipeline)
-
-### Week 2–3 — Web prototype core
-- [ ] FastAPI: /thread POST, GET (create and fetch messages)
-- [ ] FastAPI: /signal GET (returns current top 3 tasks)
-- [ ] FastAPI: /tasks POST, PATCH, DELETE
-- [ ] FastAPI: /brain-dump POST (Claude API call, returns ranked list)
-- [ ] FastAPI: /brief GET (daily brief generation)
-- [ ] Claude API: thread system prompt (full Axis context)
-- [ ] Claude API: brain dump → ranked task list prompt (test 10 variations)
-- [ ] Claude API: morning digest generation prompt
-- [ ] React: Thread screen — messages, Axis avatar, action buttons
-- [ ] React: Signal screen — hero task, queue, battle plan expand
-- [ ] React: Brain dump screen — textarea + ranked output
-- [ ] Clerk: auth flow
-- [ ] Stripe: $9/mo Pro paywall (triggers after first brain dump)
-
-### Week 4 — Skills + launch
-- [ ] 6 skill system prompts written and tested (Email, Calendar, Finance, Site, Study, Team)
-- [ ] React: Skills screen — 6 cards, talk to each
-- [ ] Claude API: skill conversation endpoints (each with different system prompt)
-- [ ] React: Mode switcher (Personal, Work, Builder, Student, Military)
-- [ ] React: Day plan screen — structured schedule
-- [ ] Landing page: axis.app — one liner, waitlist, 3 screenshots
-- [ ] Share with 50 people — get reactions specifically to brain dump
-- [ ] PostHog events: brain_dump_used, brief_requested, task_done, skill_opened, converted_pro
-
-### Week 5–7 — iOS app (Cursor + Claude 3.5)
-- [ ] Xcode project setup, folder structure
-- [ ] .cursorrules written with full iOS Axis context
-- [ ] SwiftUI: Thread screen
-- [ ] SwiftUI: Signal screen — hero task, queue, battle plan, Pomodoro timer
-- [ ] SwiftUI: Brain dump screen
-- [ ] SwiftUI: Skills screen — 6 skills, talk directly
-- [ ] SwiftUI: Day plan screen
-- [ ] Sign in with Apple
-- [ ] RevenueCat iOS SDK — Pro paywall
-- [ ] Basic WidgetKit lock screen widget — one signal, updates every 15min
-- [ ] APNs push: morning digest arrives in thread at 7AM local time
-- [ ] Real device testing — NEVER simulator only for WidgetKit
-
-### Week 8 — TestFlight launch
-- [ ] TestFlight submission + review pass
-- [ ] Onboarding flow: name, mode, first 3 tasks
-- [ ] Resend: welcome email → Day 3 → Day 7 sequences
-- [ ] In-app NPS prompt at Day 7
-- [ ] Invite 500 users: Twitter/X, Indie Hackers, personal network
-- [ ] Crashlytics crash reporting
-- [ ] Target: 50 Pro conversions from TestFlight = $450 MRR. First signal.
-
-### Week 9–10 — App Store + growth
-- [ ] App Store screenshots (all required sizes)
-- [ ] Privacy nutrition labels — fill these out carefully
-- [ ] App Store Connect: metadata, keywords, description
-- [ ] App Store submission
-- [ ] ProductHunt launch: "The AI that reads your anxious brain"
-- [ ] Twitter/X: post brain dump demo video (45 sec screen recording)
-- [ ] Gmail API integration (basic — reads labels, flags urgent)
-- [ ] Target: 500 Pro users = $4.5K MRR
-
-### Week 11–12 — Team plan + revenue milestone
-- [ ] CloudKit: team signal sharing schema
-- [ ] SwiftUI: Team signal push (manager sends task to team member)
-- [ ] SwiftUI: Manager view — team task status
-- [ ] RevenueCat: Team plan $14/user/mo
-- [ ] Google Calendar API (web) — surface prep tasks
-- [ ] Retention: daily habit streak, week progress dots
-- [ ] Morning digest cron job — runs at 6:50AM user local time
-- [ ] Target: 2,000 Pro + 50 teams = $18.7K MRR → HIRE CONTRACTORS
+- Backend: https://web-production-32f5d.up.railway.app
+- Frontend: https://axis-web-chi.vercel.app
+- Backend repo: github.com/hendrekir/axis-backend
+- iOS repo: github.com/hendrekir/axis-ios
+- Web repo: github.com/hendrekir/axis-web
+- Local: ~/forge/axis-backend · ~/forge/axis-ios · ~/forge/axis-web
 
 ---
 
-## 10. SWIFT CONTRACTOR BRIEF
+## 14. THE 12 RULES
 
-When you hit $18K MRR, post this to Upwork, Toptal, and Twitter/X #iOSDev:
-
----
-
-**Senior iOS Engineer — Axis (AI Agent OS Layer for iPhone)**
-
-**Rate:** $150–180/hr · 20hrs/week
-**Duration:** 3 months initial, ongoing if strong
-**Location:** Remote · AUS/APAC timezone strongly preferred
-**Hiring:** 2 contractors simultaneously — you will cross-review each other's implementations
-
-**What Axis is:**
-An ambient AI agent layer for iPhone that reads emails, messages, Instagram, Snapchat, calendar, and health data continuously. Communicates back through the lock screen, Dynamic Island, and a persistent thread. Think: what Siri should have been. Currently live on App Store with [X] paying users.
-
-**What you'll build:**
-- UNNotificationServiceExtension — intercepts and rewrites every notification with AI context and action buttons
-- ActivityKit Live Activities — Dynamic Island showing live agent status
-- Social Skill — Instagram + Snapchat notification parsing and cross-referencing
-- Screen Time API app intercept — redirects distraction opens to specific content
-- On-device CoreML urgency classifier (Phase 2)
-
-**What's already built:**
-Full SwiftUI app, thread UI, signal screen, brain dump, 6 skills, basic WidgetKit widget, RevenueCat, Sign in with Apple, CloudKit sync, FastAPI backend. You're building the OS-level moat on top of a working product with paying users.
-
-**Stack:**
-SwiftUI, WidgetKit, ActivityKit, UNNotificationServiceExtension, EventKit, HealthKit, CoreLocation, SiriKit, CoreML, CloudKit, RevenueCat iOS SDK, APNs. Backend: FastAPI + Neon Postgres on Railway.
-
-**To apply:**
-Send 2–3 examples of WidgetKit or notification extension work shipped to App Store. Describe the hardest background processing or notification bug you've debugged and how you found it. If you can't tell that story, you haven't done this in production.
+1. Never build Phase 2 before Phase 1 NPS > 40
+2. One repo per layer — never mix iOS and backend
+3. Real device testing for all OS features
+4. Raw personal data never leaves the device
+5. Battery under 5%/day — measure before every TestFlight
+6. App Store review is a design constraint
+7. Update CLAUDE.md after every significant session
+8. Build Android version before Month 6 — the acquisition demo
+9. No acquisition talks before $500K MRR
+10. 18-month sprint — not a 10-year company
+11. Never paste credentials in any chat window
+12. Build on and tweak. Never full redesign.
 
 ---
 
-**Why two contractors:**
-We hire two senior iOS engineers and you cross-check each other on hard OS APIs. Where you disagree is where the hard problem is. The notification extension and Dynamic Island are the features that determine App Store approval and battery impact. Two sets of eyes is mandatory, not optional.
-
----
-
-## 11. THE 10 RULES
-
-1. **Never build Phase 2 until Phase 1 has NPS above 40.** Do not build the Email agent until 200 TestFlight users use the thread daily for 7 days. Agents are useless if the thread habit doesn't exist first.
-
-2. **One repo per layer — never mix iOS and backend.** The interface between them is a documented API contract. Never let them bleed.
-
-3. **Test every OS feature on a real device.** WidgetKit, ActivityKit, notification extensions, and background refresh all behave differently in the simulator. Real device testing is not optional.
-
-4. **Privacy architecture is non-negotiable from day one.** Raw personal data never leaves the device. Only generated text and metadata hits the backend. This is the App Store strategy and the trust story.
-
-5. **Battery impact must be measured before every TestFlight build.** Run Instruments battery profiling. Target: under 5% battery per day for all background agents combined. One-star reviews for battery drain kill apps.
-
-6. **App Store review is a design constraint.** The notification interceptor and social reading features will face scrutiny. Frame every feature as explicit user benefit. Have privacy policy and data use declarations ready.
-
-7. **Update CLAUDE.md and .cursorrules after every significant session.** What changed, what broke, what was decided. 5 minutes per session. Non-negotiable.
-
-8. **Ship the Social Skill before Month 6.** It's the viral feature — the one people show their friends. Don't miss this window.
-
-9. **Don't enter acquisition conversations before $500K MRR.** Strong revenue = strong negotiating position. Apple pays more for proven products.
-
-10. **This is an 18-month sprint, not a 10-year company.** Every decision optimises for: getting to acquisition conversations with Apple, or building the moat that makes you worth acquiring.
-
----
-
-## 12. THE VIABILITY DECISION
-
-### Scenario A: Bootstrap (recommended if possible)
-**Requirement:** 15–20 hrs/week available after carpentry. 3–4 months runway on living expenses.
-**Path:** Web prototype → basic iOS → $18K MRR → hire contractors.
-**Risk:** Time constraint. If 15 hrs/week isn't realistic, everything extends and the window closes.
-**Verdict:** Viable if you have the time. The brain dump feature alone is strong enough to get to revenue without the OS moat.
-
-### Scenario B: Raise $50–80K first
-**Requirement:** Angel round or savings. Hire 2 Swift contractors from day one.
-**Path:** Web prototype (3 weeks) → full native iOS with contractors from week 4.
-**Risk:** Finding angel capital in Brisbane for a pre-revenue product.
-**Verdict:** Faster path to the moat. Worth pursuing alongside bootstrap.
-**How:** YC application (Apply now — next batch deadline). Blackbird Ventures (AU). Startmate. If none work, bootstrap.
-
-### Scenario C: Not viable right now
-**Signs it's not viable:**
-- Less than 10 hours/week available consistently
-- No savings runway — need income from the product in 60 days
-- Not willing to learn basic SwiftUI with Cursor assistance
-
-**What to do instead:** Sell the concept. Write the full product spec as a deck. Find a technical co-founder or a company that could build this. The concept is genuinely valuable — it doesn't have to be you who builds it.
-
-### The honest question
-The window is 18–24 months before Apple builds this natively. Every month of delay is a month closer to the window closing. If you're going to do this, the decision needs to be made this week, not next month.
-
----
-
-## 13. CONTACTS AND RESOURCES
-
-### Where to find Swift contractors
-- Upwork: search "senior iOS developer SwiftUI WidgetKit" — filter 90%+ rating, 5+ years
-- Toptal iOS: more expensive ($200+/hr), pre-vetted
-- Twitter/X: post in #iOSDev, #Swift, #iOS
-- CocoaHeads AU: Melbourne and Sydney iOS developer meetups
-- LinkedIn: Brisbane + Sydney + Melbourne "senior iOS SwiftUI"
-
-### Key Apple documentation
-- WidgetKit: developer.apple.com/documentation/widgetkit
-- ActivityKit: developer.apple.com/documentation/activitykit
-- UNNotificationServiceExtension: developer.apple.com/documentation/usernotifications
-- EventKit: developer.apple.com/documentation/eventkit
-- SiriKit: developer.apple.com/documentation/sirikit
-
-### Key third-party services
-- RevenueCat: revenuecat.com (in-app subscriptions)
-- PostHog: posthog.com (analytics, privacy-first)
-- Railway: railway.app (backend hosting — you already use this)
-- Neon: neon.tech (Postgres — you already use this)
-- Clerk: clerk.com (auth — you already use this)
-- Resend: resend.com (email — you already use this)
-- Anthropic API: anthropic.com/api (claude-sonnet-4-5 for in-app)
-
----
-
-## 14. CURRENT STATUS
-
-**Date:** March 2026
-**Phase:** 0 — Pre-build
-**Next action:** Make the viability decision (Scenario A, B, or C above). If A or B: create Apple Developer account, create GitHub repos, write .cursorrules for iOS repo, start web prototype.
-
-**What's been decided:**
-- Product name: Axis
-- Slogan: Be phone lazy. Be world productive.
-- Core tech: FastAPI + Neon + Claude API (backend) + SwiftUI (iOS)
-- Dev tools: Cursor + Claude 3.5 Sonnet (Swift), Claude Code (backend)
-- Business model: Free / $9 Pro / $14 Team
-- Acquisition target: Apple
-- Timeline: 18 months
-
-**What's NOT decided yet:**
-- Bootstrap vs raise capital
-- Solo vs co-founder
-- Full-time vs part-time build
-
----
-
-*Update this section after every session. Date, what shipped, what changed, what's next.*
-
----
-
-**END OF AXIS CLAUDE.md v1.0**
+*Update Section 13 current deployment + add session notes after every session.*
 *This document is the single source of truth. Load it at the start of every session.*
+
+**END OF AXIS CLAUDE.md v2.0**
