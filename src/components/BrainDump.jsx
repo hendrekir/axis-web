@@ -44,7 +44,7 @@ function ProGate({ used, onUpgrade, upgrading }) {
         <span className="text-blue-400 text-xl font-bold">A</span>
       </div>
       <div>
-        <h2 className="text-white text-lg font-semibold">You've used {used}/{FREE_LIMIT} free brain dumps</h2>
+        <h2 className="text-white text-lg font-semibold">You've used {used}/{FREE_LIMIT} free brain dumps today</h2>
         <p className="text-neutral-400 text-sm mt-2 max-w-md mx-auto">
           Upgrade to Pro for unlimited brain dumps, Gmail integration, all Skills, and your daily brief.
         </p>
@@ -70,13 +70,38 @@ function ProGate({ used, onUpgrade, upgrading }) {
   )
 }
 
+const STORAGE_KEY = 'axis_brain_dump_results'
+
+function loadStoredResults() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return []
+    const { date, results } = JSON.parse(stored)
+    // Expire results from previous days
+    if (date !== new Date().toISOString().slice(0, 10)) {
+      localStorage.removeItem(STORAGE_KEY)
+      return []
+    }
+    return results
+  } catch {
+    return []
+  }
+}
+
+function saveResults(results) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    date: new Date().toISOString().slice(0, 10),
+    results,
+  }))
+}
+
 export default function BrainDump() {
   const { getToken, isLoaded, isSignedIn } = useAuth()
   const [text, setText] = useState('')
-  const [result, setResult] = useState(null)
+  const [results, setResults] = useState(loadStoredResults)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [usage, setUsage] = useState({ used: 0, plan: 'free' })
+  const [usage, setUsage] = useState({ count: 0, limit: FREE_LIMIT, is_pro: false })
   const [gated, setGated] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
 
@@ -90,7 +115,7 @@ export default function BrainDump() {
       const token = await getToken()
       const data = await getBrainDumpUsage(token)
       setUsage(data)
-      if (data.plan === 'free' && data.used >= FREE_LIMIT) {
+      if (!data.is_pro && data.count >= data.limit) {
         setGated(true)
       }
     } catch {
@@ -104,19 +129,18 @@ export default function BrainDump() {
 
     setLoading(true)
     setError(null)
-    setResult(null)
 
     try {
       const token = await getToken()
       const data = await postBrainDump(text, token)
-      setResult(data)
 
-      // Update local usage count
-      const newUsed = usage.used + 1
-      setUsage(prev => ({ ...prev, used: newUsed }))
-      if (usage.plan === 'free' && newUsed >= FREE_LIMIT) {
-        setGated(true)
-      }
+      const updated = [...results, data]
+      setResults(updated)
+      saveResults(updated)
+      setText('')
+
+      // Re-fetch real count from backend
+      await loadUsage()
     } catch (e) {
       setError(e.message)
     } finally {
@@ -136,13 +160,8 @@ export default function BrainDump() {
     }
   }
 
-  function reset() {
-    setText('')
-    setResult(null)
-    setError(null)
-  }
-
-  const showGate = gated && !result
+  const showGate = gated && results.length === 0
+  const hasResults = results.length > 0
 
   return (
     <div className="h-full overflow-y-auto">
@@ -153,57 +172,67 @@ export default function BrainDump() {
           <p className="text-neutral-400 text-sm mt-2">
             Dump everything on your mind. Axis will extract and rank your tasks.
           </p>
-          {isSignedIn && usage.plan === 'free' && !showGate && (
+          {isSignedIn && !usage.is_pro && !showGate && (
             <p className="text-neutral-600 text-xs mt-1">
-              {FREE_LIMIT - usage.used} free dump{FREE_LIMIT - usage.used !== 1 ? 's' : ''} remaining
+              {usage.limit - usage.count} free dump{usage.limit - usage.count !== 1 ? 's' : ''} remaining
             </p>
           )}
         </div>
 
         {showGate ? (
-          <ProGate used={usage.used} onUpgrade={handleUpgrade} upgrading={upgrading} />
-        ) : !result ? (
-          /* Input form */
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
-              rows={6}
-              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-4 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-blue-600 resize-none transition-colors"
-            />
-            {error && (
-              <p className="text-red-400 text-sm">{error}</p>
-            )}
-            <button
-              type="submit"
-              disabled={!text.trim() || loading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white font-medium rounded-xl transition-colors"
-            >
-              {loading ? 'Axis is thinking...' : 'Dump it'}
-            </button>
-          </form>
+          <ProGate used={usage.count} onUpgrade={handleUpgrade} upgrading={upgrading} />
         ) : (
-          /* Results */
           <div className="space-y-6">
-            <div className="grid gap-3">
-              {result.tasks.map((task, i) => (
-                <TaskCard key={i} task={task} />
-              ))}
-            </div>
-
-            {result.summary && (
-              <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4">
-                <p className="text-neutral-300 text-sm leading-relaxed">{result.summary}</p>
+            {/* Stacked results — newest first */}
+            {hasResults && (
+              <div className="space-y-6">
+                {[...results].reverse().map((result, ri) => (
+                  <div key={ri} className="space-y-3">
+                    <div className="grid gap-3">
+                      {result.tasks.map((task, ti) => (
+                        <TaskCard key={ti} task={task} />
+                      ))}
+                    </div>
+                    {result.summary && (
+                      <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4">
+                        <p className="text-neutral-300 text-sm leading-relaxed">{result.summary}</p>
+                      </div>
+                    )}
+                    {ri < results.length - 1 && (
+                      <div className="border-t border-neutral-800" />
+                    )}
+                  </div>
+                ))}
               </div>
             )}
 
-            <button
-              onClick={reset}
-              className="w-full py-3 bg-neutral-800 hover:bg-neutral-700 text-white font-medium rounded-xl transition-colors"
-            >
-              {gated ? 'Back' : 'Dump again'}
-            </button>
+            {/* Input form — always visible unless gated */}
+            {!gated && (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
+                  rows={6}
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-4 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-blue-600 resize-none transition-colors"
+                />
+                {error && (
+                  <p className="text-red-400 text-sm">{error}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={!text.trim() || loading}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white font-medium rounded-xl transition-colors"
+                >
+                  {loading ? 'Axis is thinking...' : hasResults ? 'Dump more' : 'Dump it'}
+                </button>
+              </form>
+            )}
+
+            {/* Show gate inline after results if limit hit */}
+            {gated && hasResults && (
+              <ProGate used={usage.count} onUpgrade={handleUpgrade} upgrading={upgrading} />
+            )}
           </div>
         )}
       </div>
