@@ -2,16 +2,22 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 async function request(path, options = {}) {
   const url = `${API_URL}${path}`;
+  const { headers: optHeaders, ...rest } = options;
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...optHeaders,
     },
-    ...options,
+    ...rest,
   });
   if (!res.ok) {
     const error = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(error.detail || 'Request failed');
+    const detail = error.detail;
+    const message = typeof detail === 'string' ? detail
+      : Array.isArray(detail) ? detail.map(d => d.msg || JSON.stringify(d)).join('; ')
+      : typeof detail === 'object' && detail !== null ? (detail.message || JSON.stringify(detail))
+      : 'Request failed';
+    throw new Error(message);
   }
   return res.json();
 }
