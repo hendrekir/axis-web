@@ -26,10 +26,10 @@ export function authHeaders(token) {
   return { Authorization: `Bearer ${token}` };
 }
 
-// Brain dump — currently public, no auth needed
-export function postBrainDump(text) {
+export function postBrainDump(text, token) {
   return request('/brain-dump', {
     method: 'POST',
+    headers: authHeaders(token),
     body: JSON.stringify({ text }),
   });
 }

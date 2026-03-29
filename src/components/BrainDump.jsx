@@ -71,7 +71,7 @@ function ProGate({ used, onUpgrade, upgrading }) {
 }
 
 export default function BrainDump() {
-  const { getToken, isSignedIn } = useAuth()
+  const { getToken, isLoaded, isSignedIn } = useAuth()
   const [text, setText] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -81,8 +81,9 @@ export default function BrainDump() {
   const [upgrading, setUpgrading] = useState(false)
 
   useEffect(() => {
+    if (!isLoaded) return
     if (isSignedIn) loadUsage()
-  }, [isSignedIn])
+  }, [isLoaded])
 
   async function loadUsage() {
     try {
@@ -106,7 +107,8 @@ export default function BrainDump() {
     setResult(null)
 
     try {
-      const data = await postBrainDump(text)
+      const token = await getToken()
+      const data = await postBrainDump(text, token)
       setResult(data)
 
       // Update local usage count
