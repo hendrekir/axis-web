@@ -11,15 +11,17 @@ export default function Settings() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Check URL for gmail callback result
+  // Check URL for OAuth callback results
   const params = new URLSearchParams(window.location.search)
   const gmailResult = params.get('gmail')
+  const spotifyResult = params.get('spotify')
+  const calendarResult = params.get('calendar')
 
   useEffect(() => {
     if (!isLoaded) return
     loadUser()
-    if (gmailResult) {
-      // Clean query param so banner doesn't persist on refresh
+    if (gmailResult || spotifyResult || calendarResult) {
+      // Clean query params so banners don't persist on refresh
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [isLoaded])
@@ -38,6 +40,14 @@ export default function Settings() {
 
   function connectGmail() {
     window.location.href = `${API_URL}/auth/gmail?clerk_id=${clerkUser.id}`
+  }
+
+  function connectSpotify() {
+    window.location.href = `${API_URL}/auth/spotify?clerk_id=${clerkUser.id}`
+  }
+
+  function connectCalendar() {
+    window.location.href = `${API_URL}/auth/calendar?clerk_id=${clerkUser.id}`
   }
 
   if (loading) {
@@ -65,6 +75,24 @@ export default function Settings() {
         {gmailResult === 'error' && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm">
             Gmail connection failed. Please try again.
+          </div>
+        )}
+
+        {spotifyResult === 'connected' && (
+          <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 text-green-400 text-sm">
+            Spotify connected successfully.
+          </div>
+        )}
+
+        {spotifyResult === 'error' && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm">
+            Spotify connection failed. Please try again.
+          </div>
+        )}
+
+        {calendarResult === 'connected' && (
+          <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 text-green-400 text-sm">
+            Google Calendar connected successfully.
           </div>
         )}
 
@@ -128,8 +156,66 @@ export default function Settings() {
             )}
           </div>
 
+          {/* Spotify */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+                  <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.224-2.723a.78.78 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.78.78 0 01-.453-1.493c3.63-1.102 8.14-.568 11.233 1.33a.78.78 0 01.257 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.532-1.072 9.404-.865 13.115 1.338a.935.935 0 01-1.054 1.543z" fill="#1DB954"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-white text-sm font-medium">Spotify</p>
+                <p className="text-neutral-500 text-xs">
+                  {user?.spotify_connected ? 'Connected — Axis reads your listening' : 'Not connected'}
+                </p>
+              </div>
+            </div>
+            {user?.spotify_connected ? (
+              <span className="px-3 py-1.5 bg-green-500/10 text-green-400 text-xs font-medium rounded-lg">
+                Connected
+              </span>
+            ) : (
+              <button
+                onClick={connectSpotify}
+                className="px-4 py-2 bg-[#1DB954] hover:bg-[#1ed760] text-black text-sm font-medium rounded-lg transition-colors"
+              >
+                Connect Spotify
+              </button>
+            )}
+          </div>
+
+          {/* Google Calendar */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+                  <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z" fill="#4285F4"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-white text-sm font-medium">Google Calendar</p>
+                <p className="text-neutral-500 text-xs">
+                  {user?.calendar_connected ? 'Connected — Axis reads your events' : 'Not connected'}
+                </p>
+              </div>
+            </div>
+            {user?.calendar_connected ? (
+              <span className="px-3 py-1.5 bg-green-500/10 text-green-400 text-xs font-medium rounded-lg">
+                Connected
+              </span>
+            ) : (
+              <button
+                onClick={connectCalendar}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Connect Calendar
+              </button>
+            )}
+          </div>
+
           {/* Future connections */}
-          {['Google Calendar', 'Slack', 'Stripe'].map((name) => (
+          {['Slack', 'Stripe'].map((name) => (
             <div key={name} className="flex items-center justify-between opacity-50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
