@@ -159,7 +159,7 @@ export default function BrainDump() {
     }
   }
 
-  const showGate = gated && results.length === 0
+  const showGate = gated
   const hasResults = results.length > 0
 
   return (
@@ -173,7 +173,7 @@ export default function BrainDump() {
           </p>
           {isSignedIn && !usage.is_pro && !showGate && (
             <p className="text-neutral-600 text-xs mt-1">
-              {usage.limit - usage.count} free dump{usage.limit - usage.count !== 1 ? 's' : ''} remaining
+              {Math.max(0, usage.limit - usage.count)} free dump{Math.max(0, usage.limit - usage.count) !== 1 ? 's' : ''} remaining
             </p>
           )}
         </div>
@@ -228,10 +228,6 @@ export default function BrainDump() {
               </form>
             )}
 
-            {/* Show gate inline after results if limit hit */}
-            {gated && hasResults && (
-              <ProGate used={usage.count} onUpgrade={handleUpgrade} upgrading={upgrading} />
-            )}
           </div>
         )}
       </div>
