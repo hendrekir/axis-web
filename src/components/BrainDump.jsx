@@ -152,9 +152,17 @@ export default function BrainDump() {
     try {
       const token = await getToken()
       const data = await createCheckoutSession(token)
-      window.location.href = data.url
-    } catch (e) {
-      setError(e.message)
+      console.log('Checkout response:', data)
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        console.error('No URL in response:', data)
+        setError('Checkout failed — no redirect URL returned')
+        setUpgrading(false)
+      }
+    } catch (err) {
+      console.error('Upgrade failed:', err)
+      setError(err.message)
       setUpgrading(false)
     }
   }
