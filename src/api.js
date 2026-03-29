@@ -94,6 +94,14 @@ export function getMe(token) {
   return request('/me', { headers: authHeaders(token) });
 }
 
+export function updateMe(updates, token) {
+  return request('/me', {
+    method: 'PATCH',
+    headers: authHeaders(token),
+    body: JSON.stringify(updates),
+  });
+}
+
 // Stripe — create checkout session for Pro upgrade
 export function createCheckoutSession(token) {
   return request('/billing/checkout', {

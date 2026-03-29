@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import ModeSwitcher from './components/ModeSwitcher'
 import Thread from './components/Thread'
 import BrainDump from './components/BrainDump'
 import Signal from './components/Signal'
@@ -29,6 +30,7 @@ function Nav() {
       </div>
       <div className="flex items-center gap-3">
         <SignedIn>
+          <ModeSwitcher />
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
