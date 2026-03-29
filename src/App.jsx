@@ -3,6 +3,9 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-reac
 import Thread from './components/Thread'
 import BrainDump from './components/BrainDump'
 import Signal from './components/Signal'
+import Skills from './components/Skills'
+import Brief from './components/Brief'
+import Settings from './components/Settings'
 
 function Nav() {
   const linkClass = ({ isActive }) =>
@@ -20,6 +23,9 @@ function Nav() {
         <NavLink to="/thread" className={linkClass}>Thread</NavLink>
         <NavLink to="/brain-dump" className={linkClass}>Brain Dump</NavLink>
         <NavLink to="/signal" className={linkClass}>Signal</NavLink>
+        <NavLink to="/skills" className={linkClass}>Skills</NavLink>
+        <NavLink to="/brief" className={linkClass}>Brief</NavLink>
+        <NavLink to="/settings" className={linkClass}>Settings</NavLink>
       </div>
       <div className="flex items-center gap-3">
         <SignedIn>
@@ -47,6 +53,9 @@ export default function App() {
           <Route path="/thread" element={<Thread />} />
           <Route path="/brain-dump" element={<BrainDump />} />
           <Route path="/signal" element={<Signal />} />
+          <Route path="/skills" element={<Skills />} />
+          <Route path="/brief" element={<Brief />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
     </div>

@@ -77,3 +77,26 @@ export function chatWithSkill(skillId, message, token) {
     body: JSON.stringify({ message }),
   });
 }
+
+// Settings — Gmail OAuth
+export function getGmailAuthUrl(token) {
+  // Returns the redirect URL; caller should window.location.href to it
+  return `${API_URL}/auth/gmail`;
+}
+
+export function getMe(token) {
+  return request('/me', { headers: authHeaders(token) });
+}
+
+// Stripe — create checkout session for Pro upgrade
+export function createCheckoutSession(token) {
+  return request('/billing/checkout', {
+    method: 'POST',
+    headers: authHeaders(token),
+  });
+}
+
+// Brain dump usage count
+export function getBrainDumpUsage(token) {
+  return request('/brain-dump/usage', { headers: authHeaders(token) });
+}
