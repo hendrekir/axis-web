@@ -114,3 +114,16 @@ export function createCheckoutSession(token) {
 export function getBrainDumpUsage(token) {
   return request('/brain-dump/usage', { headers: authHeaders(token) });
 }
+
+// Apprentice
+export function getApprentice(token) {
+  return request('/apprentice', { headers: authHeaders(token) });
+}
+
+export function correctApprentice(patternType, correction, token) {
+  return request('/apprentice/correct', {
+    method: 'PATCH',
+    headers: authHeaders(token),
+    body: JSON.stringify({ pattern_type: patternType, correction }),
+  });
+}

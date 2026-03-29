@@ -7,6 +7,7 @@ import Signal from './components/Signal'
 import Skills from './components/Skills'
 import Brief from './components/Brief'
 import Settings from './components/Settings'
+import Apprentice from './components/Apprentice'
 
 function Nav() {
   const linkClass = ({ isActive }) =>
@@ -26,6 +27,7 @@ function Nav() {
         <NavLink to="/signal" className={linkClass}>Signal</NavLink>
         <NavLink to="/skills" className={linkClass}>Skills</NavLink>
         <NavLink to="/brief" className={linkClass}>Brief</NavLink>
+        <NavLink to="/apprentice" className={linkClass}>Apprentice</NavLink>
         <NavLink to="/settings" className={linkClass}>Settings</NavLink>
       </div>
       <div className="flex items-center gap-3">
@@ -57,6 +59,7 @@ export default function App() {
           <Route path="/signal" element={<Signal />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/brief" element={<Brief />} />
+          <Route path="/apprentice" element={<Apprentice />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
