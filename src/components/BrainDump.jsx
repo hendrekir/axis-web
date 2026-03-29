@@ -102,8 +102,9 @@ export default function BrainDump() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [usage, setUsage] = useState({ count: 0, limit: FREE_LIMIT, is_pro: false })
-  const [gated, setGated] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
+
+  const gated = !usage.is_pro && usage.count >= usage.limit
 
   useEffect(() => {
     if (!isLoaded) return
@@ -114,12 +115,10 @@ export default function BrainDump() {
     try {
       const token = await getToken()
       const data = await getBrainDumpUsage(token)
+      console.log('[BrainDump] usage from backend:', data)
       setUsage(data)
-      if (!data.is_pro && data.count >= data.limit) {
-        setGated(true)
-      }
-    } catch {
-      // Not signed in or endpoint not ready — allow usage
+    } catch (err) {
+      console.error('[BrainDump] loadUsage failed:', err)
     }
   }
 
@@ -153,7 +152,7 @@ export default function BrainDump() {
     try {
       const token = await getToken()
       const data = await createCheckoutSession(token)
-      window.location.href = data.checkout_url
+      window.location.href = data.url
     } catch (e) {
       setError(e.message)
       setUpgrading(false)
