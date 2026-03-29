@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/clerk-react'
+import { useAuth, useUser } from '@clerk/clerk-react'
 import { getMe, getGmailAuthUrl, authHeaders } from '../api'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export default function Settings() {
   const { getToken } = useAuth()
+  const { user: clerkUser } = useUser()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -30,11 +31,8 @@ export default function Settings() {
     }
   }
 
-  async function connectGmail() {
-    const token = await getToken()
-    // Redirect to backend Gmail OAuth — includes Bearer token as query param
-    // since the redirect goes through the browser (no fetch)
-    window.location.href = `${API_URL}/auth/gmail?token=${token}`
+  function connectGmail() {
+    window.location.href = `${API_URL}/auth/gmail?clerk_id=${clerkUser.id}`
   }
 
   if (loading) {
