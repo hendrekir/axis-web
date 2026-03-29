@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Write(routes/**)",
+      "Write(services/**)",
+      "Write(prompts/**)",
+      "Write(src/components/**)",
+      "Write(src/screens/**)",
+      "Write(src/**/*.jsx)",
+      "Write(src/**/*.js)",
+      "Write(src/**/*.css)",
+      "Edit(routes/**)",
+      "Edit(services/**)",
+      "Edit(prompts/**)",
+      "Edit(requirements.txt)",
+      "Edit(package.json)",
+      "Bash(pip install*)",
+      "Bash(npm install*)",
+      "Bash(python3 -c \"import ast*\")",
+      "Bash(curl -s http://localhost*)",
+      "Bash(curl -s -X POST http://localhost*)",
+      "Bash(curl -s -X GET http://localhost*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(mkdir -p *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(echo *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(drop table*)",
+      "Bash(sudo *)",
+      "Bash(*gitignore* secret*)",
+      "Bash(railway*)",
+      "Write(.env)",
+      "Write(.gitignore)",
+      "Write(railway.json)",
+      "Write(Procfile)",
+      "Write(nixpacks.toml)"
+    ]
+  }
+}
