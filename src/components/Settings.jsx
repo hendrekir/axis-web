@@ -5,7 +5,7 @@ import { getMe, getGmailAuthUrl, authHeaders } from '../api'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export default function Settings() {
-  const { getToken } = useAuth()
+  const { getToken, isLoaded } = useAuth()
   const { user: clerkUser } = useUser()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -16,8 +16,13 @@ export default function Settings() {
   const gmailResult = params.get('gmail')
 
   useEffect(() => {
+    if (!isLoaded) return
     loadUser()
-  }, [])
+    if (gmailResult) {
+      // Clean query param so banner doesn't persist on refresh
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [isLoaded])
 
   async function loadUser() {
     try {
