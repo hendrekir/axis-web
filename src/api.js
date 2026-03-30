@@ -115,6 +115,27 @@ export function getBrainDumpUsage(token) {
   return request('/brain-dump/usage', { headers: authHeaders(token) });
 }
 
+// Skills
+export function getSkills(token) {
+  return request('/skills', { headers: authHeaders(token) });
+}
+
+export function updateSkill(skillId, updates, token) {
+  return request(`/skills/${skillId}`, {
+    method: 'PATCH',
+    headers: authHeaders(token),
+    body: JSON.stringify(updates),
+  });
+}
+
+export function runSkill(skillId, message, token) {
+  return request(`/skills/${skillId}/run`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ message }),
+  });
+}
+
 // Apprentice
 export function getApprentice(token) {
   return request('/apprentice', { headers: authHeaders(token) });
