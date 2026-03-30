@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth, useUser } from '@clerk/clerk-react'
-import { getMe, getGmailAuthUrl, authHeaders } from '../api'
+import { getMe, updateMe, authHeaders } from '../api'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -10,6 +10,8 @@ export default function Settings() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [contextNotes, setContextNotes] = useState('')
+  const [contextSaved, setContextSaved] = useState(false)
 
   // Check URL for OAuth callback results
   const params = new URLSearchParams(window.location.search)
@@ -31,10 +33,22 @@ export default function Settings() {
       const token = await getToken()
       const data = await getMe(token)
       setUser(data)
+      setContextNotes(data.context_notes || '')
     } catch (e) {
       setError(e.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function saveContextNotes() {
+    try {
+      const token = await getToken()
+      await updateMe({ context_notes: contextNotes }, token)
+      setContextSaved(true)
+      setTimeout(() => setContextSaved(false), 2000)
+    } catch (e) {
+      setError(e.message)
     }
   }
 
@@ -123,6 +137,23 @@ export default function Settings() {
               <p className="text-white mt-0.5 capitalize">{user?.plan || 'free'}</p>
             </div>
           </div>
+        </section>
+
+        {/* Context notes */}
+        <section className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wider">What Axis should always know</h2>
+          <p className="text-neutral-500 text-xs">This context is injected into every Axis conversation. Tell Axis about your role, preferences, current projects, or anything it should always keep in mind.</p>
+          <textarea
+            value={contextNotes}
+            onChange={(e) => setContextNotes(e.target.value)}
+            onBlur={saveContextNotes}
+            placeholder="e.g. I'm a builder in Brisbane. My main project is a 12-unit residential build in Paddington. Marcus is my key supplier contact. I prefer short, direct replies."
+            rows={4}
+            className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-3 text-sm text-white placeholder-neutral-600 resize-y outline-none focus:border-neutral-600"
+          />
+          {contextSaved && (
+            <p className="text-green-400 text-xs">Saved.</p>
+          )}
         </section>
 
         {/* Gmail connection */}

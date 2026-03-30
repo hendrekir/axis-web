@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
-import { postThread, getThreadHistory } from '../api'
+import { postThread, getThreadHistory, authHeaders } from '../api'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function AxisAvatar() {
   return (
@@ -10,19 +12,115 @@ function AxisAvatar() {
   )
 }
 
-function Message({ msg }) {
+function isDraftMessage(msg) {
+  if (msg.role !== 'assistant') return false
+  return (
+    msg.message_type === 'email_draft' ||
+    (msg.content && msg.content.includes('Draft reply ready:'))
+  )
+}
+
+function parseDraft(content) {
+  // Extract to, subject, and draft body from the message
+  const lines = content.split('\n')
+  let to = '', subject = '', body = ''
+  let inDraft = false
+
+  for (const line of lines) {
+    if (line.startsWith('Draft reply ready:')) {
+      inDraft = true
+      continue
+    }
+    if (!inDraft) {
+      // Try to extract subject from bold header like **Subject: ...**
+      const subjectMatch = line.match(/\*\*(.+?)\*\*/)
+      if (subjectMatch) subject = subjectMatch[1]
+      // Try to extract "From:" to determine who we're replying to
+      const fromMatch = line.match(/From:\s*(.+)/i)
+      if (fromMatch) to = fromMatch[1].trim()
+      continue
+    }
+    body += line + '\n'
+  }
+
+  return { to: to.trim(), subject: subject.trim(), body: body.trim() }
+}
+
+function Message({ msg, getToken }) {
+  const [sendState, setSendState] = useState(null) // null | 'sending' | 'sent' | 'error'
   const isUser = msg.role === 'user'
+  const hasDraft = isDraftMessage(msg)
+
+  async function sendDraft() {
+    const { to, subject, body } = parseDraft(msg.content)
+    if (!to || !body) {
+      setSendState('error')
+      return
+    }
+    setSendState('sending')
+    try {
+      const token = await getToken()
+      const res = await fetch(`${API_URL}/gmail/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+        body: JSON.stringify({ to, subject: subject || 'Re:', body }),
+      })
+      if (!res.ok) throw new Error('Send failed')
+      setSendState('sent')
+    } catch {
+      setSendState('error')
+    }
+  }
+
+  function dismissDraft() {
+    setSendState('dismissed')
+  }
+
   return (
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       {!isUser && <AxisAvatar />}
-      <div
-        className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-          isUser
-            ? 'bg-blue-600 text-white rounded-br-md'
-            : 'bg-neutral-800 text-neutral-200 rounded-bl-md'
-        }`}
-      >
-        {msg.content}
+      <div className="max-w-[75%]">
+        <div
+          className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+            isUser
+              ? 'bg-blue-600 text-white rounded-br-md'
+              : 'bg-neutral-800 text-neutral-200 rounded-bl-md'
+          }`}
+        >
+          {msg.content}
+        </div>
+        {hasDraft && sendState !== 'dismissed' && (
+          <div className="flex gap-2 mt-2 ml-1">
+            {sendState === 'sent' ? (
+              <span className="text-green-400 text-xs font-medium">Sent</span>
+            ) : sendState === 'sending' ? (
+              <span className="text-neutral-400 text-xs">Sending...</span>
+            ) : sendState === 'error' ? (
+              <span className="text-red-400 text-xs">Failed to send. Check draft details.</span>
+            ) : (
+              <>
+                <button
+                  onClick={sendDraft}
+                  className="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition-colors"
+                >
+                  Send
+                </button>
+                <button
+                  onClick={() => {/* TODO: edit mode */}}
+                  className="px-3 py-1 bg-neutral-700 hover:bg-neutral-600 text-neutral-300 text-xs font-medium rounded-lg transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={dismissDraft}
+                  className="px-3 py-1 bg-neutral-700 hover:bg-neutral-600 text-neutral-400 text-xs font-medium rounded-lg transition-colors"
+                >
+                  Dismiss
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -97,7 +195,7 @@ export default function Thread() {
           </div>
         )}
         {messages.map((msg, i) => (
-          <Message key={msg.id || i} msg={msg} />
+          <Message key={msg.id || i} msg={msg} getToken={getToken} />
         ))}
         {loading && (
           <div className="flex gap-3">
