@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth, useUser } from '@clerk/clerk-react'
 import { postBrainDump, getBrainDumpUsage, createCheckoutSession } from '../api'
+import MicButton from './MicButton'
 
 const FREE_LIMIT = 3
 
@@ -216,13 +217,19 @@ export default function BrainDump() {
             {/* Input form — always visible unless gated */}
             {!gated && (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
-                  rows={6}
-                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-4 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-blue-600 resize-none transition-colors"
-                />
+                <div className="relative">
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
+                    rows={6}
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-4 pr-12 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-blue-600 resize-none transition-colors"
+                  />
+                  <MicButton
+                    onResult={(transcript) => setText((prev) => prev ? prev + ' ' + transcript : transcript)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg"
+                  />
+                </div>
                 {error && (
                   <p className="text-red-400 text-sm">{error}</p>
                 )}

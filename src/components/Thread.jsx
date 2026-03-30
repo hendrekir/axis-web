@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
 import { postThread, getThreadHistory, authHeaders } from '../api'
+import MicButton from './MicButton'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -220,6 +221,10 @@ export default function Thread() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Message Axis..."
             className="flex-1 bg-transparent text-white text-sm px-3 py-2 outline-none placeholder-neutral-500"
+          />
+          <MicButton
+            onResult={(text) => setInput((prev) => prev ? prev + ' ' + text : text)}
+            className="px-2 py-2 rounded-lg"
           />
           <button
             type="submit"
