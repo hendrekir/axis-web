@@ -117,7 +117,7 @@ export default function Settings() {
         )}
 
         {/* Profile */}
-        <section className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-3">
+        <section className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-5 space-y-3">
           <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wider">Profile</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
@@ -140,7 +140,7 @@ export default function Settings() {
         </section>
 
         {/* Context notes */}
-        <section className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-3">
+        <section className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-5 space-y-3">
           <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wider">What Axis should always know</h2>
           <p className="text-neutral-500 text-xs">This context is injected into every Axis conversation. Tell Axis about your role, preferences, current projects, or anything it should always keep in mind.</p>
           <textarea
@@ -149,7 +149,7 @@ export default function Settings() {
             onBlur={saveContextNotes}
             placeholder="e.g. I'm a builder in Brisbane. My main project is a 12-unit residential build in Paddington. Marcus is my key supplier contact. I prefer short, direct replies."
             rows={4}
-            className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-3 text-sm text-white placeholder-neutral-600 resize-y outline-none focus:border-neutral-600"
+            className="w-full bg-[#1A1726] border border-[#2A2540] rounded-lg px-4 py-3 text-sm text-white placeholder-neutral-600 resize-y outline-none focus:border-[#8B5CF6]"
           />
           {contextSaved && (
             <p className="text-green-400 text-xs">Saved.</p>
@@ -157,11 +157,11 @@ export default function Settings() {
         </section>
 
         {/* Gmail connection */}
-        <section className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+        <section className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-5 space-y-4">
           <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wider">Connections</h2>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-[#1A1726] flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
                   <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" fill="#ef4444"/>
                 </svg>
@@ -180,7 +180,7 @@ export default function Settings() {
             ) : (
               <button
                 onClick={connectGmail}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-sm font-medium rounded-lg transition-colors"
               >
                 Connect Gmail
               </button>
@@ -190,7 +190,7 @@ export default function Settings() {
           {/* Spotify */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-[#1A1726] flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
                   <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.224-2.723a.78.78 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.78.78 0 01-.453-1.493c3.63-1.102 8.14-.568 11.233 1.33a.78.78 0 01.257 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.532-1.072 9.404-.865 13.115 1.338a.935.935 0 01-1.054 1.543z" fill="#1DB954"/>
                 </svg>
@@ -219,7 +219,7 @@ export default function Settings() {
           {/* Google Calendar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-[#1A1726] flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
                   <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z" fill="#4285F4"/>
                 </svg>
@@ -238,7 +238,7 @@ export default function Settings() {
             ) : (
               <button
                 onClick={connectCalendar}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-sm font-medium rounded-lg transition-colors"
               >
                 Connect Calendar
               </button>
@@ -249,8 +249,8 @@ export default function Settings() {
           {['Slack', 'Stripe'].map((name) => (
             <div key={name} className="flex items-center justify-between opacity-50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center">
-                  <div className="w-5 h-5 rounded bg-neutral-700" />
+                <div className="w-10 h-10 rounded-lg bg-[#1A1726] flex items-center justify-center">
+                  <div className="w-5 h-5 rounded bg-[#2A2540]" />
                 </div>
                 <div>
                   <p className="text-white text-sm font-medium">{name}</p>

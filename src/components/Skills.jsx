@@ -4,7 +4,7 @@ import { getSkills, updateSkill, runSkill, chatWithSkill } from '../api'
 
 const MODEL_COLORS = {
   claude: 'bg-orange-500/20 text-orange-400',
-  perplexity: 'bg-blue-500/20 text-blue-400',
+  perplexity: 'bg-blue-500/20 text-[#8B5CF6]',
   grok: 'bg-pink-500/20 text-pink-400',
   gemini_flash: 'bg-emerald-500/20 text-emerald-400',
   gemini_pro: 'bg-emerald-500/20 text-emerald-400',
@@ -12,7 +12,7 @@ const MODEL_COLORS = {
 
 const SKILL_COLORS = {
   email: 'bg-red-500/20 text-red-400',
-  calendar: 'bg-blue-500/20 text-blue-400',
+  calendar: 'bg-blue-500/20 text-[#8B5CF6]',
   finance: 'bg-green-500/20 text-green-400',
   site: 'bg-amber-500/20 text-amber-400',
   study: 'bg-purple-500/20 text-purple-400',
@@ -124,7 +124,7 @@ export default function Skills() {
   if (activeSkill) {
     return (
       <div className="h-full flex flex-col">
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-800">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-[#1E1A2E]">
           <button
             onClick={() => { setActiveSkill(null); setMessages([]) }}
             className="text-neutral-400 hover:text-white text-sm transition-colors"
@@ -135,7 +135,7 @@ export default function Skills() {
             {activeSkill.name[0]}
           </span>
           <span className="text-white font-medium">{activeSkill.name}</span>
-          <span className={`ml-2 px-2 py-0.5 rounded text-[10px] font-medium ${MODEL_COLORS[activeSkill.reasoning_model] || 'bg-neutral-700 text-neutral-300'}`}>
+          <span className={`ml-2 px-2 py-0.5 rounded text-[10px] font-medium ${MODEL_COLORS[activeSkill.reasoning_model] || 'bg-[#2A2540] text-neutral-300'}`}>
             {activeSkill.reasoning_model}
           </span>
         </div>
@@ -145,8 +145,8 @@ export default function Skills() {
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] px-4 py-2.5 rounded-xl text-sm leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-neutral-800 text-neutral-200'
+                  ? 'bg-[#8B5CF6] text-white'
+                  : 'bg-[#1A1726] text-neutral-200'
               }`}>
                 {msg.content}
               </div>
@@ -154,25 +154,25 @@ export default function Skills() {
           ))}
           {chatLoading && (
             <div className="flex justify-start">
-              <div className="bg-neutral-800 text-neutral-400 px-4 py-2.5 rounded-xl text-sm">
+              <div className="bg-[#1A1726] text-neutral-400 px-4 py-2.5 rounded-xl text-sm">
                 Thinking...
               </div>
             </div>
           )}
         </div>
 
-        <form onSubmit={send} className="px-4 py-3 border-t border-neutral-800">
+        <form onSubmit={send} className="px-4 py-3 border-t border-[#1E1A2E]">
           <div className="flex gap-2">
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder={`Ask ${activeSkill.name}...`}
-              className="flex-1 bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 outline-none focus:border-neutral-600"
+              className="flex-1 bg-[#110F1C] border border-[#2A2540] rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 outline-none focus:border-[#8B5CF6]"
             />
             <button
               type="submit"
               disabled={!input.trim() || chatLoading}
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium rounded-xl transition-colors"
+              className="px-4 py-2.5 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-40 text-white text-sm font-medium rounded-xl transition-colors"
             >
               Send
             </button>
@@ -201,7 +201,7 @@ export default function Skills() {
           {skills.map(skill => (
             <div
               key={skill.id}
-              className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 group"
+              className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-4 group"
             >
               {/* Header row: icon + name + toggle */}
               <div className="flex items-center justify-between mb-2">
@@ -213,10 +213,10 @@ export default function Skills() {
                     {skill.name[0]}
                   </span>
                   <div>
-                    <span className="text-white font-medium group-hover:text-blue-400 transition-colors block text-sm">
+                    <span className="text-white font-medium group-hover:text-[#8B5CF6] transition-colors block text-sm">
                       {skill.name}
                     </span>
-                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${MODEL_COLORS[skill.reasoning_model] || 'bg-neutral-700 text-neutral-300'}`}>
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${MODEL_COLORS[skill.reasoning_model] || 'bg-[#2A2540] text-neutral-300'}`}>
                       {skill.reasoning_model}
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export default function Skills() {
                   onClick={() => toggleActive(skill)}
                   disabled={toggling === skill.id}
                   className={`w-10 h-6 rounded-full transition-colors relative ${
-                    skill.is_active ? 'bg-green-600' : 'bg-neutral-700'
+                    skill.is_active ? 'bg-green-600' : 'bg-[#2A2540]'
                   }`}
                 >
                   <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
@@ -245,7 +245,7 @@ export default function Skills() {
               {skill.data_sources && skill.data_sources.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-3">
                   {skill.data_sources.map(src => (
-                    <span key={src} className="px-2 py-0.5 bg-neutral-800 text-neutral-400 text-[10px] rounded-full">
+                    <span key={src} className="px-2 py-0.5 bg-[#1A1726] text-neutral-400 text-[10px] rounded-full">
                       {src}
                     </span>
                   ))}
@@ -256,7 +256,7 @@ export default function Skills() {
               <div className="flex gap-2">
                 <button
                   onClick={() => openChat(skill)}
-                  className="flex-1 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-medium rounded-lg transition-colors"
+                  className="flex-1 px-3 py-1.5 bg-[#1A1726] hover:bg-[#2A2540] text-neutral-300 text-xs font-medium rounded-lg transition-colors"
                 >
                   Chat
                 </button>
@@ -264,7 +264,7 @@ export default function Skills() {
                   <button
                     onClick={() => handleRun(skill)}
                     disabled={running === skill.id}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-medium rounded-lg transition-colors"
+                    className="px-3 py-1.5 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-40 text-white text-xs font-medium rounded-lg transition-colors"
                   >
                     {running === skill.id ? 'Running...' : 'Run'}
                   </button>

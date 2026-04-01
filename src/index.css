@@ -1,24 +1,36 @@
 @import "tailwindcss";
 
-:root {
-  --axis-black: #0a0a0a;
-  --axis-dark: #141414;
-  --axis-gray: #1e1e1e;
-  --axis-border: #2a2a2a;
-  --axis-text: #e5e5e5;
-  --axis-muted: #737373;
-  --axis-accent: #3b82f6;
-  --axis-urgent: #ef4444;
+@theme {
+  --color-axis-bg: #0C0A15;
+  --color-axis-surface: #110F1C;
+  --color-axis-border: #1E1A2E;
+  --color-axis-accent: #8B5CF6;
+  --color-axis-accent-hover: #7C3AED;
+  --color-axis-text: #E5E5E5;
+  --color-axis-muted: #737373;
+  --color-axis-urgent: #EF4444;
 }
 
 body {
   margin: 0;
-  background: var(--axis-black);
-  color: var(--axis-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  background: #0C0A15;
+  color: #E5E5E5;
+  font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+}
+
+.font-mono,
+code, pre,
+[class*="text-xs"][class*="font-medium"][class*="rounded"] {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--axis-border); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #1E1A2E; border-radius: 2px; }

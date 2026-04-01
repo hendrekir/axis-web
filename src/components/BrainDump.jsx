@@ -6,7 +6,7 @@ import MicButton from './MicButton'
 const FREE_LIMIT = 3
 
 const CATEGORY_COLORS = {
-  work: 'bg-blue-500/20 text-blue-400',
+  work: 'bg-blue-500/20 text-[#8B5CF6]',
   health: 'bg-green-500/20 text-green-400',
   home: 'bg-yellow-500/20 text-yellow-400',
   money: 'bg-emerald-500/20 text-emerald-400',
@@ -18,7 +18,7 @@ const CATEGORY_COLORS = {
 function TaskCard({ task }) {
   const colorClass = CATEGORY_COLORS[task.category] || CATEGORY_COLORS.personal
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col gap-2">
+    <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-4 flex flex-col gap-2">
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-white text-sm font-medium leading-snug">{task.title}</h3>
         {task.is_urgent && (
@@ -40,9 +40,9 @@ function TaskCard({ task }) {
 
 function ProGate({ used, onUpgrade, upgrading }) {
   return (
-    <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center space-y-4">
-      <div className="w-12 h-12 mx-auto rounded-full bg-blue-600/20 flex items-center justify-center">
-        <span className="text-blue-400 text-xl font-bold">A</span>
+    <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-8 text-center space-y-4">
+      <div className="w-12 h-12 mx-auto rounded-full bg-[#8B5CF6]/20 flex items-center justify-center">
+        <span className="text-[#8B5CF6] text-xl font-bold">A</span>
       </div>
       <div>
         <h2 className="text-white text-lg font-semibold">You've used {used}/{FREE_LIMIT} free brain dumps today</h2>
@@ -50,7 +50,7 @@ function ProGate({ used, onUpgrade, upgrading }) {
           Upgrade to Pro for unlimited brain dumps, Gmail integration, all Skills, and your daily brief.
         </p>
       </div>
-      <div className="bg-neutral-800/50 rounded-xl p-4 max-w-xs mx-auto">
+      <div className="bg-[#1A1726]/50 rounded-xl p-4 max-w-xs mx-auto">
         <p className="text-white font-semibold">Axis Pro</p>
         <p className="text-2xl font-bold text-white mt-1">$9<span className="text-sm text-neutral-400 font-normal">/mo</span></p>
         <ul className="text-neutral-400 text-xs mt-3 space-y-1.5 text-left">
@@ -63,7 +63,7 @@ function ProGate({ used, onUpgrade, upgrading }) {
       <button
         onClick={onUpgrade}
         disabled={upgrading}
-        className="w-full max-w-xs mx-auto block py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-medium rounded-xl transition-colors"
+        className="w-full max-w-xs mx-auto block py-3 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-40 text-white font-medium rounded-xl transition-colors"
       >
         {upgrading ? 'Redirecting to checkout...' : 'Upgrade to Pro — $9/mo'}
       </button>
@@ -202,12 +202,12 @@ export default function BrainDump() {
                       ))}
                     </div>
                     {result.summary && (
-                      <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4">
+                      <div className="bg-[#110F1C]/50 border border-[#1E1A2E] rounded-xl p-4">
                         <p className="text-neutral-300 text-sm leading-relaxed">{result.summary}</p>
                       </div>
                     )}
                     {ri < results.length - 1 && (
-                      <div className="border-t border-neutral-800" />
+                      <div className="border-t border-[#1E1A2E]" />
                     )}
                   </div>
                 ))}
@@ -223,7 +223,7 @@ export default function BrainDump() {
                     onChange={(e) => setText(e.target.value)}
                     placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
                     rows={6}
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-4 pr-12 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-blue-600 resize-none transition-colors"
+                    className="w-full bg-[#110F1C] border border-[#2A2540] rounded-xl p-4 pr-12 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-[#8B5CF6] resize-none transition-colors"
                   />
                   <MicButton
                     onResult={(transcript) => setText((prev) => prev ? prev + ' ' + transcript : transcript)}
@@ -236,7 +236,7 @@ export default function BrainDump() {
                 <button
                   type="submit"
                   disabled={!text.trim() || loading}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white font-medium rounded-xl transition-colors"
+                  className="w-full py-3 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-30 text-white font-medium rounded-xl transition-colors"
                 >
                   {loading ? 'Axis is thinking...' : hasResults ? 'Dump more' : 'Dump it'}
                 </button>

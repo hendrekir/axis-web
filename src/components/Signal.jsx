@@ -67,7 +67,7 @@ export default function Signal() {
           <div className="space-y-4">
             {/* Hero task */}
             {hero && (
-              <div className={`bg-neutral-900 border-l-4 ${CATEGORY_COLORS[hero.category] || 'border-neutral-500/30'} rounded-xl p-6`}>
+              <div className={`bg-[#110F1C] border-l-4 ${CATEGORY_COLORS[hero.category] || 'border-neutral-500/30'} rounded-xl p-6`}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span className="text-xs text-neutral-500 uppercase tracking-wider">Next action</span>
@@ -82,7 +82,7 @@ export default function Signal() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mt-3">
-                  <span className="px-2 py-0.5 bg-neutral-800 text-neutral-400 text-xs rounded-full">{hero.category}</span>
+                  <span className="px-2 py-0.5 bg-[#1A1726] text-neutral-400 text-xs rounded-full">{hero.category}</span>
                   {hero.is_urgent && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded-full">URGENT</span>}
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function Signal() {
 
             {/* Queue */}
             {queue.map((task) => (
-              <div key={task.id} className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-4 flex items-center justify-between gap-3">
+              <div key={task.id} className="bg-[#110F1C]/50 border border-[#1E1A2E] rounded-xl p-4 flex items-center justify-between gap-3">
                 <div>
                   <h3 className="text-white text-sm font-medium">{task.title}</h3>
                   <div className="flex items-center gap-2 mt-1">
@@ -100,7 +100,7 @@ export default function Signal() {
                 </div>
                 <button
                   onClick={() => markDone(task.id)}
-                  className="shrink-0 w-8 h-8 rounded-full border border-neutral-700 hover:border-green-500 hover:bg-green-500/10 transition-colors flex items-center justify-center text-neutral-500 hover:text-green-400 text-sm"
+                  className="shrink-0 w-8 h-8 rounded-full border border-[#2A2540] hover:border-green-500 hover:bg-green-500/10 transition-colors flex items-center justify-center text-neutral-500 hover:text-green-400 text-sm"
                 >
                   ✓
                 </button>

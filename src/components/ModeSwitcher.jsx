@@ -49,7 +49,7 @@ export default function ModeSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-full text-sm font-medium text-white transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1726] hover:bg-[#2A2540] rounded-full text-sm font-medium text-white transition-colors"
       >
         <span>{current.icon}</span>
         <span>{current.label}</span>
@@ -59,7 +59,7 @@ export default function ModeSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl py-1 z-50">
+        <div className="absolute right-0 top-full mt-1 w-44 bg-[#110F1C] border border-[#1E1A2E] rounded-xl shadow-xl py-1 z-50">
           {MODES.map(m => (
             <button
               key={m.id}
@@ -73,7 +73,7 @@ export default function ModeSwitcher() {
               <span>{m.icon}</span>
               <span>{m.label}</span>
               {m.id === mode && (
-                <svg className="w-3.5 h-3.5 ml-auto text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <svg className="w-3.5 h-3.5 ml-auto text-[#8B5CF6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               )}

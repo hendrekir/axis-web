@@ -64,8 +64,8 @@ export default function Apprentice() {
         <div className="max-w-2xl mx-auto px-4 py-8">
           <h1 className="text-2xl font-bold text-white">Apprentice</h1>
           <p className="text-neutral-400 mt-1 mb-8">What Axis has learned about you</p>
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center mx-auto mb-4">
+          <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#1A1726] flex items-center justify-center mx-auto mb-4">
               <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 6v6l4 2" className="text-neutral-500" />
                 <circle cx="12" cy="12" r="10" className="text-neutral-600" />
@@ -108,8 +108,8 @@ export default function Apprentice() {
 
         {/* Learned this week highlight */}
         {insights.learned_this_week && (
-          <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl px-5 py-4">
-            <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">Learned this week</p>
+          <div className="bg-[#8B5CF6]/5 border border-[#8B5CF6]/20 rounded-xl px-5 py-4">
+            <p className="text-xs font-semibold text-[#8B5CF6] uppercase tracking-wider mb-1">Learned this week</p>
             <p className="text-white text-sm">{insights.learned_this_week}</p>
           </div>
         )}
@@ -120,7 +120,7 @@ export default function Apprentice() {
           if (items.length === 0) return null
 
           return (
-            <section key={key} className="bg-neutral-900 border border-neutral-800 rounded-xl p-5">
+            <section key={key} className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-5">
               <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wider">{title}</h2>
               <p className="text-neutral-600 text-xs mt-0.5 mb-3">{description}</p>
 
@@ -155,12 +155,12 @@ export default function Apprentice() {
                     onChange={(e) => setCorrectionText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitCorrection(key)}
                     placeholder="What's wrong? e.g. 'I actually prefer mornings'"
-                    className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-600"
+                    className="flex-1 bg-[#1A1726] border border-[#2A2540] rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#8B5CF6]"
                     autoFocus
                   />
                   <button
                     onClick={() => submitCorrection(key)}
-                    className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                    className="px-3 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-sm font-medium rounded-lg transition-colors"
                   >
                     Send
                   </button>

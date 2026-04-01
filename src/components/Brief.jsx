@@ -35,7 +35,7 @@ export default function Brief() {
           <button
             onClick={fetchBrief}
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
           >
             {loading ? 'Generating...' : brief ? 'Refresh' : 'Generate Brief'}
           </button>
@@ -50,13 +50,13 @@ export default function Brief() {
         {brief ? (
           <div className="space-y-3">
             {brief.split('\n\n').map((block, i) => (
-              <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-xl px-5 py-4">
+              <div key={i} className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl px-5 py-4">
                 <p className="text-neutral-200 text-sm leading-relaxed whitespace-pre-wrap">{block}</p>
               </div>
             ))}
           </div>
         ) : !loading ? (
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center">
+          <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-8 text-center">
             <p className="text-neutral-500 text-sm">
               Tap "Generate Brief" to get your morning digest.
             </p>
@@ -65,7 +65,7 @@ export default function Brief() {
             </p>
           </div>
         ) : (
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center">
+          <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-8 text-center">
             <p className="text-neutral-400 text-sm animate-pulse">
               Axis is assembling your brief...
             </p>

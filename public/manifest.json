@@ -1,11 +1,11 @@
 {
-  "name": "Axis",
-  "short_name": "Axis",
+  "name": "AXIS",
+  "short_name": "AXIS",
   "description": "Your ambient AI agent. Be phone lazy. Be world productive.",
   "start_url": "/thread",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#0C0A15",
+  "theme_color": "#0C0A15",
   "orientation": "portrait",
   "icons": [
     {

@@ -12,14 +12,14 @@ import Apprentice from './components/Apprentice'
 function Nav() {
   const linkClass = ({ isActive }) =>
     `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-      isActive ? 'bg-white/10 text-white' : 'text-neutral-400 hover:text-white'
+      isActive ? 'bg-[#8B5CF6]/15 text-[#8B5CF6]' : 'text-neutral-400 hover:text-white'
     }`
 
   return (
-    <nav className="flex items-center justify-between px-4 py-3 border-b border-neutral-800">
+    <nav className="flex items-center justify-between px-4 py-3 border-b border-[#1E1A2E]">
       <div className="flex items-center gap-2">
-        <span className="text-lg font-bold text-white tracking-tight">AXIS</span>
-        <span className="text-xs text-neutral-500 ml-1">v1.0</span>
+        <span className="font-display text-lg text-white tracking-tight">AXIS</span>
+        <span className="font-mono text-[10px] text-neutral-500 ml-1">v1.0</span>
       </div>
       <div className="flex items-center gap-1">
         <NavLink to="/thread" className={linkClass}>Thread</NavLink>
@@ -37,7 +37,7 @@ function Nav() {
         </SignedIn>
         <SignedOut>
           <SignInButton mode="modal">
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">
+            <button className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-sm font-medium rounded-lg transition-colors">
               Sign in
             </button>
           </SignInButton>
@@ -49,7 +49,7 @@ function Nav() {
 
 export default function App() {
   return (
-    <div className="h-screen flex flex-col bg-neutral-950">
+    <div className="h-screen flex flex-col bg-[#0C0A15]">
       <Nav />
       <main className="flex-1 overflow-hidden">
         <Routes>

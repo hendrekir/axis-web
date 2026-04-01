@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function AxisAvatar() {
   return (
-    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+    <div className="w-8 h-8 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-xs font-bold shrink-0">
       A
     </div>
   )
@@ -47,6 +47,47 @@ function parseDraft(content) {
   return { to: to.trim(), subject: subject.trim(), body: body.trim() }
 }
 
+function SpeakerButton({ text, getToken }) {
+  const [playing, setPlaying] = useState(false)
+
+  async function speak() {
+    if (playing) return
+    setPlaying(true)
+    try {
+      const token = await getToken()
+      const res = await fetch(`${API_URL}/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+        body: JSON.stringify({ text }),
+      })
+      if (!res.ok) { setPlaying(false); return }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audio.onended = () => { setPlaying(false); URL.revokeObjectURL(url) }
+      audio.onerror = () => { setPlaying(false); URL.revokeObjectURL(url) }
+      audio.play()
+    } catch {
+      setPlaying(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={speak}
+      className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition-colors relative"
+      title="Listen"
+    >
+      {playing && (
+        <span className="absolute inset-0 rounded-full border-2 border-[#8B5CF6] animate-pulse" />
+      )}
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="#8B5CF6">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+    </button>
+  )
+}
+
 function Message({ msg, getToken }) {
   const [sendState, setSendState] = useState(null) // null | 'sending' | 'sent' | 'error'
   const isUser = msg.role === 'user'
@@ -81,14 +122,21 @@ function Message({ msg, getToken }) {
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       {!isUser && <AxisAvatar />}
       <div className="max-w-[75%]">
-        <div
-          className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-            isUser
-              ? 'bg-blue-600 text-white rounded-br-md'
-              : 'bg-neutral-800 text-neutral-200 rounded-bl-md'
-          }`}
-        >
-          {msg.content}
+        <div className="relative group">
+          <div
+            className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+              isUser
+                ? 'bg-[#8B5CF6] text-white rounded-br-md'
+                : 'bg-[#110F1C] text-neutral-200 rounded-bl-md'
+            }`}
+          >
+            {msg.content}
+          </div>
+          {!isUser && (
+            <div className="absolute -right-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <SpeakerButton text={msg.content} getToken={getToken} />
+            </div>
+          )}
         </div>
         {hasDraft && sendState !== 'dismissed' && (
           <div className="flex gap-2 mt-2 ml-1">
@@ -201,11 +249,11 @@ export default function Thread() {
         {loading && (
           <div className="flex gap-3">
             <AxisAvatar />
-            <div className="bg-neutral-800 px-4 py-3 rounded-2xl rounded-bl-md">
+            <div className="bg-[#110F1C] px-4 py-3 rounded-2xl rounded-bl-md">
               <div className="flex gap-1">
-                <span className="w-2 h-2 bg-neutral-500 rounded-full animate-bounce" />
-                <span className="w-2 h-2 bg-neutral-500 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-2 h-2 bg-neutral-500 rounded-full animate-bounce [animation-delay:300ms]" />
+                <span className="w-2 h-2 bg-[#8B5CF6] rounded-full animate-bounce" />
+                <span className="w-2 h-2 bg-[#8B5CF6] rounded-full animate-bounce [animation-delay:150ms]" />
+                <span className="w-2 h-2 bg-[#8B5CF6] rounded-full animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -214,7 +262,7 @@ export default function Thread() {
 
       {/* Input */}
       <form onSubmit={send} className="px-4 pb-4">
-        <div className="flex gap-2 bg-neutral-900 border border-neutral-700 rounded-xl p-2">
+        <div className="flex gap-2 bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-2">
           <input
             type="text"
             value={input}
@@ -229,7 +277,7 @@ export default function Thread() {
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-30 disabled:hover:bg-[#8B5CF6] text-white text-sm font-medium rounded-lg transition-colors"
           >
             Send
           </button>
