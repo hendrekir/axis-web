@@ -49,11 +49,21 @@ export default function Brief() {
 
         {brief ? (
           <div className="space-y-3">
-            {brief.split('\n\n').map((block, i) => (
-              <div key={i} className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl px-5 py-4">
-                <p className="text-neutral-200 text-sm leading-relaxed whitespace-pre-wrap">{block}</p>
-              </div>
-            ))}
+            {(() => {
+              let cleaned = brief.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
+              let messages
+              try {
+                const parsed = JSON.parse(cleaned)
+                messages = Array.isArray(parsed) ? parsed : [cleaned]
+              } catch {
+                messages = cleaned.split('\n\n').filter(Boolean)
+              }
+              return messages.map((msg, i) => (
+                <div key={i} className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl px-5 py-4">
+                  <p className="text-neutral-200 text-sm leading-relaxed">{msg}</p>
+                </div>
+              ))
+            })()}
           </div>
         ) : !loading ? (
           <div className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-8 text-center">
