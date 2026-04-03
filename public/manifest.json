@@ -2,7 +2,7 @@
   "name": "AXIS",
   "short_name": "AXIS",
   "description": "Your ambient AI agent. Be phone lazy. Be world productive.",
-  "start_url": "/thread",
+  "start_url": "/situation",
   "display": "standalone",
   "background_color": "#0C0A15",
   "theme_color": "#0C0A15",

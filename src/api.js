@@ -136,6 +136,15 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Push subscription
+export function subscribePush(subscription, token) {
+  return request('/push/subscribe', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(subscription),
+  });
+}
+
 // Calendar
 export function getUpcomingEvents(token, hours = 24) {
   return request(`/calendar/upcoming?hours=${hours}`, { headers: authHeaders(token) });

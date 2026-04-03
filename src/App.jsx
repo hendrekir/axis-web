@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react'
+import { registerPushSubscription } from './lib/pushSubscription'
 import ModeSwitcher from './components/ModeSwitcher'
 import Thread from './components/Thread'
 import BrainDump from './components/BrainDump'
@@ -9,6 +11,15 @@ import Brief from './components/Brief'
 import Settings from './components/Settings'
 import Apprentice from './components/Apprentice'
 import Situation from './components/Situation'
+
+function PushRegistrar() {
+  const { getToken, isLoaded } = useAuth()
+  useEffect(() => {
+    if (!isLoaded) return
+    getToken().then(token => registerPushSubscription(token))
+  }, [isLoaded])
+  return null
+}
 
 function Nav() {
   const linkClass = ({ isActive }) =>
@@ -34,6 +45,7 @@ function Nav() {
       </div>
       <div className="flex items-center gap-3">
         <SignedIn>
+          <PushRegistrar />
           <ModeSwitcher />
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
