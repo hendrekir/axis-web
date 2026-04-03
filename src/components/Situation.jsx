@@ -201,7 +201,7 @@ export default function Situation() {
         {/* Greeting */}
         <div>
           <h1 className="font-display text-3xl font-extrabold text-white">
-            {timeGreeting()}, {name || 'there'}.
+            {timeGreeting()}{name ? `, ${name}` : ''}.
           </h1>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-neutral-400 text-sm">{formatTime()}</span>

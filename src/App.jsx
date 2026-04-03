@@ -7,6 +7,7 @@ import Onboarding from './components/Onboarding'
 import ModeSwitcher from './components/ModeSwitcher'
 import Thread from './components/Thread'
 import BrainDump from './components/BrainDump'
+import Mind from './components/Mind'
 import Signal from './components/Signal'
 import Skills from './components/Skills'
 import Brief from './components/Brief'
@@ -154,7 +155,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/situation" replace />} />
           <Route path="/situation" element={<Situation />} />
           <Route path="/axis" element={<Thread />} />
-          <Route path="/mind" element={<BrainDump />} />
+          <Route path="/mind" element={<Mind />} />
           <Route path="/brief" element={<Brief />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/signal" element={<Signal />} />

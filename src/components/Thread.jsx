@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useAuth } from '@clerk/clerk-react'
+import { useAuth, useUser } from '@clerk/clerk-react'
 import { postThread, getThreadHistory, parseSchedule, authHeaders } from '../api'
 import MicButton from './MicButton'
 import ScheduleConfirmCard from './ScheduleConfirmCard'
@@ -184,11 +184,31 @@ function Message({ msg, getToken, onScheduleConfirmed }) {
   )
 }
 
+const TOPICS = [
+  { key: 'work', label: 'Work', color: 'bg-blue-500/20 text-blue-400' },
+  { key: 'personal', label: 'Personal', color: 'bg-purple-500/20 text-purple-400' },
+  { key: 'health', label: 'Health', color: 'bg-green-500/20 text-green-400' },
+  { key: 'money', label: 'Money', color: 'bg-emerald-500/20 text-emerald-400' },
+  { key: 'travel', label: 'Travel', color: 'bg-amber-500/20 text-amber-400' },
+  { key: 'family', label: 'Family', color: 'bg-pink-500/20 text-pink-400' },
+  { key: 'learning', label: 'Learning', color: 'bg-indigo-500/20 text-indigo-400' },
+  { key: 'ideas', label: 'Ideas', color: 'bg-yellow-500/20 text-yellow-400' },
+]
+
+function timeGreeting() {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning'
+  if (h < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export default function Thread() {
   const { getToken } = useAuth()
+  const { user: clerkUser } = useUser()
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [activeTopic, setActiveTopic] = useState(null)
   const scrollRef = useRef(null)
 
   useEffect(() => {
@@ -251,14 +271,41 @@ export default function Thread() {
     }
   }
 
+  const firstName = clerkUser?.firstName || ''
+
   return (
     <div className="flex flex-col h-full max-w-2xl mx-auto">
+      {/* Topic bubbles */}
+      {messages.length > 0 && (
+        <div className="flex gap-2 px-4 pt-3 pb-1 overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => setActiveTopic(null)}
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              activeTopic === null ? 'bg-[#8B5CF6]/20 text-[#8B5CF6]' : 'bg-[#1A1726] text-neutral-500'
+            }`}
+          >
+            All
+          </button>
+          {TOPICS.map(t => (
+            <button
+              key={t.key}
+              onClick={() => setActiveTopic(activeTopic === t.key ? null : t.key)}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                activeTopic === t.key ? t.color : 'bg-[#1A1726] text-neutral-500'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {messages.length === 0 && (
           <div className="text-center text-neutral-500 mt-20">
-            <p className="text-lg font-medium">Talk to Axis</p>
-            <p className="text-sm mt-1">Your ambient AI agent. Ask anything.</p>
+            <p className="text-lg font-medium">{timeGreeting()}{firstName ? `, ${firstName}` : ''}.</p>
+            <p className="text-sm mt-1">What's on your mind?</p>
           </div>
         )}
         {messages.map((msg, i) => (
@@ -292,7 +339,7 @@ export default function Thread() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Message Axis..."
+            placeholder="Message Axis, or tap the mic..."
             className="flex-1 bg-transparent text-white text-sm px-3 py-2 outline-none placeholder-neutral-500"
           />
           <MicButton
