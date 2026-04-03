@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
-import { postThread, getThreadHistory, authHeaders } from '../api'
+import { postThread, getThreadHistory, parseSchedule, authHeaders } from '../api'
 import MicButton from './MicButton'
+import ScheduleConfirmCard from './ScheduleConfirmCard'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -88,7 +89,7 @@ function SpeakerButton({ text, getToken }) {
   )
 }
 
-function Message({ msg, getToken }) {
+function Message({ msg, getToken, onScheduleConfirmed }) {
   const [sendState, setSendState] = useState(null) // null | 'sending' | 'sent' | 'error'
   const isUser = msg.role === 'user'
   const hasDraft = isDraftMessage(msg)
@@ -138,6 +139,14 @@ function Message({ msg, getToken }) {
             </div>
           )}
         </div>
+        {msg.calendar_intent && (
+          <div className="mt-2">
+            <ScheduleConfirmCard
+              intent={msg.calendar_intent}
+              onConfirmed={onScheduleConfirmed}
+            />
+          </div>
+        )}
         {hasDraft && sendState !== 'dismissed' && (
           <div className="flex gap-2 mt-2 ml-1">
             {sendState === 'sent' ? (
@@ -214,15 +223,24 @@ export default function Thread() {
     try {
       const token = await getToken()
       const data = await postThread(userMsg.content, token)
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: data.response.content,
-          id: data.response.id,
-          message_type: data.response.message_type,
-        },
-      ])
+      const assistantMsg = {
+        role: 'assistant',
+        content: data.response.content,
+        id: data.response.id,
+        message_type: data.response.message_type,
+      }
+
+      // Check for calendar intent in the user's message
+      try {
+        const intent = await parseSchedule(userMsg.content, token)
+        if (intent.has_intent) {
+          assistantMsg.calendar_intent = intent
+        }
+      } catch {
+        // Schedule parse failed — not critical
+      }
+
+      setMessages((prev) => [...prev, assistantMsg])
     } catch (e) {
       setMessages((prev) => [
         ...prev,
@@ -244,7 +262,14 @@ export default function Thread() {
           </div>
         )}
         {messages.map((msg, i) => (
-          <Message key={msg.id || i} msg={msg} getToken={getToken} />
+          <Message
+            key={msg.id || i}
+            msg={msg}
+            getToken={getToken}
+            onScheduleConfirmed={(text) => {
+              setMessages(prev => [...prev, { role: 'assistant', content: text, id: Date.now() }])
+            }}
+          />
         ))}
         {loading && (
           <div className="flex gap-3">

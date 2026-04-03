@@ -136,6 +136,23 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Schedule
+export function parseSchedule(message, token) {
+  return request('/schedule/parse', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ message }),
+  });
+}
+
+export function confirmSchedule(event, token) {
+  return request('/schedule/confirm', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(event),
+  });
+}
+
 // Dispatch
 export function runDispatch(token) {
   return request('/cron/dispatch', {
