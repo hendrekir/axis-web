@@ -143,6 +143,19 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Journal
+export function getJournal(token) {
+  return request('/journal', { headers: authHeaders(token) });
+}
+
+export function postJournal(question, answer, token) {
+  return request('/journal', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ question, answer }),
+  });
+}
+
 // Insights
 export function getInsights(token) {
   return request('/me/insights', { headers: authHeaders(token) });
