@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth, useUser } from '@clerk/clerk-react'
-import { getMe, getSignal, updateTask, getUpcomingEvents, touchStreak } from '../api'
+import { getMe, getSignal, updateTask, getUpcomingEvents, touchStreak, getInsights } from '../api'
 
 function timeGreeting() {
   const h = new Date().getHours()
@@ -31,6 +31,7 @@ export default function Situation() {
   const [mits, setMits] = useState([])
   const [nextEvent, setNextEvent] = useState(null)
   const [streak, setStreak] = useState(0)
+  const [insights, setInsights] = useState([])
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(null)
 
@@ -67,6 +68,14 @@ export default function Situation() {
         }
       } catch {
         // Calendar not connected — that's fine
+      }
+
+      // Insights
+      try {
+        const ins = await getInsights(token)
+        setInsights(ins.insights || [])
+      } catch {
+        // Not critical
       }
     } catch (err) {
       console.error('[Situation] load failed:', err)
@@ -230,6 +239,19 @@ export default function Situation() {
                 {nextEvent.start ? formatCountdown(nextEvent.start) : ''}
               </span>
             </div>
+          </section>
+        )}
+
+        {/* Insights */}
+        {insights.length > 0 && (
+          <section className="space-y-2">
+            <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Insights</h2>
+            {insights.map((ins, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] mt-1.5 shrink-0" />
+                <p className="text-[#8B5CF6]/70 text-xs leading-relaxed">{ins}</p>
+              </div>
+            ))}
           </section>
         )}
 

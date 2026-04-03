@@ -143,6 +143,11 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Insights
+export function getInsights(token) {
+  return request('/me/insights', { headers: authHeaders(token) });
+}
+
 // Quick capture
 export function quickCapture(content, token) {
   return request('/quick-capture', {
