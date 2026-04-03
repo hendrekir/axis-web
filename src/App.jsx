@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react'
 import { registerPushSubscription } from './lib/pushSubscription'
+import Onboarding from './components/Onboarding'
 import ModeSwitcher from './components/ModeSwitcher'
 import Thread from './components/Thread'
 import BrainDump from './components/BrainDump'
@@ -61,10 +62,19 @@ function Nav() {
   )
 }
 
+function OnboardingGate() {
+  const [showOnboarding, setShowOnboarding] = useState(
+    !localStorage.getItem('onboarding_complete')
+  )
+  if (!showOnboarding) return null
+  return <Onboarding onComplete={() => setShowOnboarding(false)} />
+}
+
 export default function App() {
   return (
     <div className="h-screen flex flex-col bg-[#0C0A15]">
       <Nav />
+      <SignedIn><OnboardingGate /></SignedIn>
       <main className="flex-1 overflow-hidden">
         <Routes>
           <Route path="/" element={<Navigate to="/situation" replace />} />

@@ -136,6 +136,14 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Dispatch
+export function runDispatch(token) {
+  return request('/cron/dispatch', {
+    method: 'POST',
+    headers: authHeaders(token),
+  });
+}
+
 // Push subscription
 export function subscribePush(subscription, token) {
   return request('/push/subscribe', {
