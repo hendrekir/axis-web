@@ -258,7 +258,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <h2 className="text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-3">Schedule</h2>
 
             {events.length === 0 ? (
-              <p className="text-neutral-500 text-xs italic">No upcoming events.</p>
+              <p className="text-neutral-500 text-xs italic">No upcoming events. Try: "Dentist Tuesday 3pm" or "Team meeting Monday 10am"</p>
             ) : (
               <div className="space-y-2">
                 {events.map((event, i) => (
@@ -312,7 +312,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   type="text"
                   value={scheduleInput}
                   onChange={(e) => setScheduleInput(e.target.value)}
-                  placeholder="e.g. Dentist Tuesday 3pm"
+                  placeholder="Meeting, dentist, gym, pickup, holiday..."
                   disabled={scheduleParsing}
                   className="w-full bg-[#1A1726] border border-[#2A2540] rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 outline-none focus:border-[#8B5CF6] disabled:opacity-50"
                 />
