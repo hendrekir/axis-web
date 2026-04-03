@@ -136,6 +136,11 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Calendar
+export function getUpcomingEvents(token, hours = 24) {
+  return request(`/calendar/upcoming?hours=${hours}`, { headers: authHeaders(token) });
+}
+
 // Apprentice
 export function getApprentice(token) {
   return request('/apprentice', { headers: authHeaders(token) });

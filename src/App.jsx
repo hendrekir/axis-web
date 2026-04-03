@@ -8,6 +8,7 @@ import Skills from './components/Skills'
 import Brief from './components/Brief'
 import Settings from './components/Settings'
 import Apprentice from './components/Apprentice'
+import Situation from './components/Situation'
 
 function Nav() {
   const linkClass = ({ isActive }) =>
@@ -22,6 +23,7 @@ function Nav() {
         <span className="font-mono text-[10px] text-neutral-500 ml-1">v1.0</span>
       </div>
       <div className="flex items-center gap-1">
+        <NavLink to="/situation" className={linkClass}>Situation</NavLink>
         <NavLink to="/thread" className={linkClass}>Thread</NavLink>
         <NavLink to="/brain-dump" className={linkClass}>Brain Dump</NavLink>
         <NavLink to="/signal" className={linkClass}>Signal</NavLink>
@@ -53,7 +55,8 @@ export default function App() {
       <Nav />
       <main className="flex-1 overflow-hidden">
         <Routes>
-          <Route path="/" element={<Navigate to="/brain-dump" replace />} />
+          <Route path="/" element={<Navigate to="/situation" replace />} />
+          <Route path="/situation" element={<Situation />} />
           <Route path="/thread" element={<Thread />} />
           <Route path="/brain-dump" element={<BrainDump />} />
           <Route path="/signal" element={<Signal />} />
