@@ -82,7 +82,7 @@ export default function Onboarding({ onComplete }) {
                 <ul className="text-neutral-400 text-sm space-y-1.5">
                   <li className="flex items-start gap-2"><span className="text-[#8B5CF6]">&#8226;</span> Gmail inbox (with your permission)</li>
                   <li className="flex items-start gap-2"><span className="text-[#8B5CF6]">&#8226;</span> Google Calendar events</li>
-                  <li className="flex items-start gap-2"><span className="text-[#8B5CF6]">&#8226;</span> Your brain dumps and thread messages</li>
+                  <li className="flex items-start gap-2"><span className="text-[#8B5CF6]">&#8226;</span> Your captures and conversations</li>
                   <li className="flex items-start gap-2"><span className="text-[#8B5CF6]">&#8226;</span> Context notes you provide</li>
                 </ul>
               </div>
@@ -150,7 +150,7 @@ export default function Onboarding({ onComplete }) {
             <textarea
               value={context}
               onChange={(e) => setContext(e.target.value)}
-              placeholder="e.g. I'm a builder in Brisbane. My main project is a 12-unit residential build in Paddington. Marcus is my key supplier contact. I prefer short, direct communication."
+              placeholder="Tell Axis about you — your work, projects, goals, the people that matter, and anything it should always keep in mind. The more you share, the more useful Axis becomes."
               rows={6}
               className="w-full bg-[#110F1C] border border-[#2A2540] rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 resize-none outline-none focus:border-[#8B5CF6] transition-colors"
             />

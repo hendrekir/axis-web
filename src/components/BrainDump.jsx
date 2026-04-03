@@ -45,18 +45,18 @@ function ProGate({ used, onUpgrade, upgrading }) {
         <span className="text-[#8B5CF6] text-xl font-bold">A</span>
       </div>
       <div>
-        <h2 className="text-white text-lg font-semibold">You've used {used}/{FREE_LIMIT} free brain dumps today</h2>
+        <h2 className="text-white text-lg font-semibold">You've used {used}/{FREE_LIMIT} free captures today</h2>
         <p className="text-neutral-400 text-sm mt-2 max-w-md mx-auto">
-          Upgrade to Pro for unlimited brain dumps, Gmail integration, all Skills, and your daily brief.
+          Upgrade to Pro for unlimited captures, Gmail integration, all capabilities, and your daily brief.
         </p>
       </div>
       <div className="bg-[#1A1726]/50 rounded-xl p-4 max-w-xs mx-auto">
         <p className="text-white font-semibold">Axis Pro</p>
         <p className="text-2xl font-bold text-white mt-1">$9<span className="text-sm text-neutral-400 font-normal">/mo</span></p>
         <ul className="text-neutral-400 text-xs mt-3 space-y-1.5 text-left">
-          <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> Unlimited brain dumps</li>
+          <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> Unlimited captures</li>
           <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> Gmail inbox reading + draft replies</li>
-          <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> All 6 Skills unlocked</li>
+          <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> All capabilities unlocked</li>
           <li className="flex items-center gap-2"><span className="text-green-400">&#10003;</span> Daily morning brief</li>
         </ul>
       </div>
@@ -176,13 +176,13 @@ export default function BrainDump() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">Brain Dump</h1>
+          <h1 className="text-2xl font-bold text-white">Mind</h1>
           <p className="text-neutral-400 text-sm mt-2">
-            Dump everything on your mind. Axis will extract and rank your tasks.
+            Get everything out of your head. Axis will extract and rank your tasks.
           </p>
           {isSignedIn && !usage.is_pro && !showGate && (
             <p className="text-neutral-600 text-xs mt-1">
-              {Math.max(0, usage.limit - usage.count)} free dump{Math.max(0, usage.limit - usage.count) !== 1 ? 's' : ''} remaining
+              {Math.max(0, usage.limit - usage.count)} free capture{Math.max(0, usage.limit - usage.count) !== 1 ? 's' : ''} remaining
             </p>
           )}
         </div>
@@ -221,7 +221,7 @@ export default function BrainDump() {
                   <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="I need to finish the deck for Friday, call the electrician, pick up meds, reply to Marcus about the job, and I forgot to book the dentist..."
+                    placeholder="Everything on your mind right now — tasks, ideas, reminders, things you need to handle..."
                     rows={6}
                     className="w-full bg-[#110F1C] border border-[#2A2540] rounded-xl p-4 pr-12 text-white text-sm leading-relaxed placeholder-neutral-500 outline-none focus:border-[#8B5CF6] resize-none transition-colors"
                   />
@@ -238,7 +238,7 @@ export default function BrainDump() {
                   disabled={!text.trim() || loading}
                   className="w-full py-3 bg-[#8B5CF6] hover:bg-[#7C3AED] disabled:opacity-30 text-white font-medium rounded-xl transition-colors"
                 >
-                  {loading ? 'Axis is thinking...' : hasResults ? 'Dump more' : 'Dump it'}
+                  {loading ? 'Axis is thinking...' : hasResults ? 'Capture more' : 'Capture'}
                 </button>
               </form>
             )}

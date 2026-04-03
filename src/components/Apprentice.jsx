@@ -76,7 +76,7 @@ export default function Apprentice() {
               {data.message}
             </p>
             <p className="text-neutral-500 text-xs mt-4">
-              Axis learns from your emails, tasks, thread interactions, and brain dumps.
+              Axis learns from your emails, tasks, conversations, and captures.
               The more you use Axis, the smarter it gets.
             </p>
           </div>

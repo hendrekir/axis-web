@@ -147,7 +147,7 @@ export default function Settings() {
             value={contextNotes}
             onChange={(e) => setContextNotes(e.target.value)}
             onBlur={saveContextNotes}
-            placeholder="e.g. I'm a builder in Brisbane. My main project is a 12-unit residential build in Paddington. Marcus is my key supplier contact. I prefer short, direct replies."
+            placeholder="Tell Axis about you — your work, projects, goals, the people that matter, and anything it should always keep in mind. The more you share, the more useful Axis becomes."
             rows={4}
             className="w-full bg-[#1A1726] border border-[#2A2540] rounded-lg px-4 py-3 text-sm text-white placeholder-neutral-600 resize-y outline-none focus:border-[#8B5CF6]"
           />

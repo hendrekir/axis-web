@@ -286,7 +286,7 @@ export default function Situation() {
             </div>
           ) : (
             <div className="bg-[#110F1C] border border-[rgba(139,92,246,0.12)] rounded-xl p-6 text-center">
-              <p className="text-neutral-500 text-sm">No tasks yet. Use Brain Dump to add some.</p>
+              <p className="text-neutral-500 text-sm">Your focus for today will appear here. Tell Axis what's on your mind.</p>
             </div>
           )}
         </section>

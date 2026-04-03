@@ -50,7 +50,7 @@ export default function Signal() {
     <div className="h-full overflow-y-auto">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">Signal</h1>
+          <h1 className="text-2xl font-bold text-white">Signals</h1>
           <p className="text-neutral-400 text-sm mt-2">
             Your top priorities right now.
           </p>
@@ -60,8 +60,8 @@ export default function Signal() {
           <p className="text-neutral-500 text-center">Loading...</p>
         ) : tasks.length === 0 ? (
           <div className="text-center text-neutral-500 mt-12">
-            <p className="text-lg">No active tasks</p>
-            <p className="text-sm mt-1">Use Brain Dump to add some.</p>
+            <p className="text-lg">Nothing urgent right now</p>
+            <p className="text-sm mt-1">Axis is watching.</p>
           </div>
         ) : (
           <div className="space-y-4">
