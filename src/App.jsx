@@ -32,8 +32,8 @@ function Nav() {
   return (
     <nav className="flex items-center justify-between px-4 py-3 border-b border-[#1E1A2E]">
       <div className="flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
         <span className="font-display text-lg text-white tracking-tight">AXIS</span>
-        <span className="font-mono text-[10px] text-neutral-500 ml-1">v1.0</span>
       </div>
       <div className="flex items-center gap-1">
         <NavLink to="/situation" className={linkClass}>Situation</NavLink>
