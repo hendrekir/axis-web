@@ -143,6 +143,15 @@ export function runSkill(skillId, message, token) {
   });
 }
 
+// Quick capture
+export function quickCapture(content, token) {
+  return request('/quick-capture', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ content }),
+  });
+}
+
 // Schedule
 export function parseSchedule(message, token) {
   return request('/schedule/parse', {

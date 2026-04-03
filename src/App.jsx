@@ -12,6 +12,7 @@ import Brief from './components/Brief'
 import Settings from './components/Settings'
 import Apprentice from './components/Apprentice'
 import Situation from './components/Situation'
+import QuickCapture from './components/QuickCapture'
 
 function PushRegistrar() {
   const { getToken, isLoaded } = useAuth()
@@ -74,7 +75,7 @@ export default function App() {
   return (
     <div className="h-screen flex flex-col bg-[#0C0A15]">
       <Nav />
-      <SignedIn><OnboardingGate /></SignedIn>
+      <SignedIn><OnboardingGate /><QuickCapture /></SignedIn>
       <main className="flex-1 overflow-hidden">
         <Routes>
           <Route path="/" element={<Navigate to="/situation" replace />} />
