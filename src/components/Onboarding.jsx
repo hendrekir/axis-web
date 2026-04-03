@@ -22,8 +22,13 @@ export default function Onboarding({ onComplete }) {
     setLoading(true)
     try {
       const token = await getToken()
-      if (context.trim()) {
-        await updateMe({ context_notes: context }, token)
+      const updates = {}
+      if (context.trim()) updates.context_notes = context
+      // Auto-detect timezone from browser
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (tz) updates.timezone = tz
+      if (Object.keys(updates).length > 0) {
+        await updateMe(updates, token)
       }
       // Run dispatch to generate first signal
       await runDispatch(token)
