@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth, useUser } from '@clerk/clerk-react'
-import { getMe, getSignal, updateTask, getUpcomingEvents } from '../api'
+import { getMe, getSignal, updateTask, getUpcomingEvents, touchStreak } from '../api'
 
 function timeGreeting() {
   const h = new Date().getHours()
@@ -30,6 +30,7 @@ export default function Situation() {
   const [signals, setSignals] = useState([])
   const [mits, setMits] = useState([])
   const [nextEvent, setNextEvent] = useState(null)
+  const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(null)
 
@@ -47,6 +48,10 @@ export default function Situation() {
       ])
 
       setName(me.name || clerkUser?.firstName || '')
+      setStreak(me.current_streak || 0)
+
+      // Touch streak on every situation load
+      touchStreak(token).then(s => { if (s.current_streak) setStreak(s.current_streak) }).catch(() => {})
 
       const tasks = signalData.signal || []
       // NOW signals: urgent tasks
@@ -108,6 +113,16 @@ export default function Situation() {
             </span>
           </div>
         </div>
+
+        {/* Streak */}
+        {streak > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-orange-400 text-sm">&#x1F525;</span>
+            <span className="font-mono text-sm text-[#8B5CF6] font-medium">
+              {streak} day streak
+            </span>
+          </div>
+        )}
 
         {/* NOW Signals */}
         {signals.length > 0 && (

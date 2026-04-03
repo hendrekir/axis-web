@@ -94,6 +94,13 @@ export function getMe(token) {
   return request('/me', { headers: authHeaders(token) });
 }
 
+export function touchStreak(token) {
+  return request('/me/streak/touch', {
+    method: 'POST',
+    headers: authHeaders(token),
+  });
+}
+
 export function updateMe(updates, token) {
   return request('/me', {
     method: 'PATCH',
