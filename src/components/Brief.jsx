@@ -175,26 +175,56 @@ function WorldTab() {
   )
 }
 
+const LEARN_CHUNKS = [
+  {
+    category: 'Financial literacy',
+    categoryClasses: 'bg-emerald-500/20 text-emerald-400',
+    title: 'The one concept 95% of people never learn',
+    body: "The rich don't work for money — they own assets that work for them. An asset puts money in your pocket. A liability takes money out. Your house is a liability. A rental property is an asset. Most people spend their lives buying liabilities thinking they're assets.",
+  },
+  {
+    category: 'Psychology',
+    categoryClasses: 'bg-blue-500/20 text-blue-400',
+    title: 'Why your brain resists important work',
+    body: "The brain treats uncertainty as a threat. Starting a difficult task feels dangerous because you don't know if you'll succeed. This is why you clean your desk instead of writing the proposal. The fix: shrink the task until it feels safe. Not 'write the report' — 'write one sentence'. Motion beats meditation every time.",
+  },
+  {
+    category: 'Business',
+    categoryClasses: 'bg-amber-500/20 text-amber-400',
+    title: 'The only metric that matters early on',
+    body: "Revenue. Not users, not signups, not engagement. Revenue means someone valued your product enough to pay for it. Everything else is vanity. One paying customer tells you more than 1000 signups. Talk to your paying customers obsessively. Ignore everyone else until you have 10 people paying.",
+  },
+  {
+    category: 'History',
+    categoryClasses: 'bg-rose-500/20 text-rose-400',
+    title: 'What the Stoics knew about control',
+    body: "Divide everything into two categories: what you control and what you don't. You control your actions, your effort, your response. You don't control outcomes, other people, or luck. Most anxiety comes from trying to control the second category. The Stoics called this the dichotomy of control. It's 2000 years old and still the most useful mental model for a busy day.",
+  },
+]
+
 function LearnTab() {
+  const [chunkIndex, setChunkIndex] = useState(0)
+  const chunk = LEARN_CHUNKS[chunkIndex]
+
   return (
     <div className="space-y-4">
       <p className="text-neutral-400 text-xs uppercase tracking-wide font-medium">
         Today's crucial knowledge
       </p>
       <div className="bg-[#110F1C] border border-[rgba(139,92,246,0.12)] rounded-xl p-4 space-y-3">
-        <span className="inline-block text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-0.5 bg-emerald-500/20 text-emerald-400">
-          Financial literacy
+        <span className={`inline-block text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-0.5 ${chunk.categoryClasses}`}>
+          {chunk.category}
         </span>
-        <p className="text-white font-medium">The one concept 95% of people never learn</p>
-        <p className="text-neutral-300 text-sm leading-relaxed">
-          The rich don't work for money — they own assets that work for them. An asset puts money in
-          your pocket. A liability takes money out. Your house is a liability. A rental property is an
-          asset. Most people spend their lives buying liabilities thinking they're assets.
-        </p>
-        <div className="pt-1">
-          <button className="bg-[#1A1726] text-[#8B5CF6] text-xs font-medium rounded-lg px-3 py-1.5 hover:bg-[#8B5CF6]/10 transition-colors">
-            Next chunk &rarr;
+        <p className="text-white font-medium">{chunk.title}</p>
+        <p className="text-neutral-300 text-sm leading-relaxed">{chunk.body}</p>
+        <div className="flex items-center justify-between pt-1">
+          <button
+            onClick={() => setChunkIndex((chunkIndex + 1) % LEARN_CHUNKS.length)}
+            className="bg-[#1A1726] text-[#8B5CF6] text-xs font-medium rounded-lg px-3 py-1.5 hover:bg-[#8B5CF6]/10 transition-colors"
+          >
+            Next lesson &rarr;
           </button>
+          <span className="text-neutral-600 text-xs">{chunkIndex + 1}/{LEARN_CHUNKS.length}</span>
         </div>
       </div>
     </div>

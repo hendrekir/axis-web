@@ -61,9 +61,7 @@ function MapView() {
   return (
     <div className="grid grid-cols-2 gap-3">
       {DOMAINS.map(domain => (
-        <div key={domain.name} className={domain.name === 'Ideas' ? 'col-span-2 max-w-[calc(50%-6px)] mx-auto w-full' : ''}>
-          <DomainCard domain={domain} />
-        </div>
+        <DomainCard key={domain.name} domain={domain} />
       ))}
     </div>
   )

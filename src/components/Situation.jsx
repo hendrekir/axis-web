@@ -89,7 +89,7 @@ function SwipeableSignalCard({ signal, onDone, onDismiss, completing }) {
 }
 
 export default function Situation() {
-  const { getToken, isLoaded } = useAuth()
+  const { getToken, isLoaded, isSignedIn } = useAuth()
   const { user: clerkUser } = useUser()
   const [name, setName] = useState('')
   const [signals, setSignals] = useState([])
@@ -98,6 +98,7 @@ export default function Situation() {
   const [streak, setStreak] = useState(0)
   const [insights, setInsights] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [completing, setCompleting] = useState(null)
   const [celebratedId, setCelebratedId] = useState(null)
   const [briefSheet, setBriefSheet] = useState(null)
@@ -107,8 +108,9 @@ export default function Situation() {
 
   useEffect(() => {
     if (!isLoaded) return
+    if (!isSignedIn) { setLoading(false); return }
     loadAll()
-  }, [isLoaded])
+  }, [isLoaded, isSignedIn])
 
   async function loadAll() {
     try {
@@ -137,6 +139,7 @@ export default function Situation() {
       } catch {}
     } catch (err) {
       console.error('[Situation] load failed:', err)
+      setLoadError(true)
     } finally {
       setLoading(false)
     }
@@ -186,10 +189,52 @@ export default function Situation() {
     }
   }
 
-  if (loading) {
+  if (!isLoaded || loading) {
     return (
-      <div className="flex items-center justify-center h-full text-neutral-400">
-        Loading...
+      <div className="h-full overflow-y-auto bg-[#0C0A15]">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-[#110F1C] border border-[#1E1A2E] rounded-xl p-5 space-y-3 animate-pulse">
+              <div className="h-4 bg-neutral-800 rounded w-1/3" />
+              <div className="h-3 bg-neutral-800/60 rounded w-2/3" />
+              <div className="h-3 bg-neutral-800/40 rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="h-full flex items-center justify-center bg-[#0C0A15]">
+        <div className="text-center space-y-4 px-6">
+          <h2 className="font-display text-2xl font-extrabold text-white">Welcome to Axis</h2>
+          <p className="text-neutral-400 text-sm">Sign in to see your situation.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="h-full overflow-y-auto bg-[#0C0A15]">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+          <div>
+            <h1 className="font-display text-3xl font-extrabold text-white">
+              {timeGreeting()}{clerkUser?.firstName ? `, ${clerkUser.firstName}` : ''}.
+            </h1>
+          </div>
+          <div className="bg-[#110F1C] border border-[rgba(139,92,246,0.12)] rounded-xl p-6 text-center space-y-3">
+            <p className="text-neutral-400 text-sm">Couldn't load your situation right now.</p>
+            <button
+              onClick={() => { setLoadError(false); setLoading(true); loadAll() }}
+              className="px-4 py-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
