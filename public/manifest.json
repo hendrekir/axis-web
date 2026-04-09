@@ -1,7 +1,7 @@
 {
   "name": "AXIS",
   "short_name": "AXIS",
-  "description": "Your ambient AI agent. Be phone lazy. Be world productive.",
+  "description": "Your ambient AI agent. Everything you're trying to hold in your head. Held.",
   "start_url": "/situation",
   "display": "standalone",
   "background_color": "#0C0A15",
